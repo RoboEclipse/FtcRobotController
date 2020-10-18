@@ -10,8 +10,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEClass;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
+
+import java.util.Locale;
 
 public class DrivetrainClass {
     DcMotor lb, lf, rb, rf;
@@ -19,10 +22,12 @@ public class DrivetrainClass {
     ExpansionHubEx expansionHub;
     DistanceSensor leftDistance,backDistance, frontDistance;
     Configuration skystoneNames = new Configuration();
+    //Software
+    private Telemetry telemetry;
     // The IMU sensor object
     BNO055IMU imu;
     Orientation angles;
-    void initializeDriveTrain(HardwareMap hardwareMap, Telemetry telemetry){
+    void initializeDriveTrain(HardwareMap hardwareMap){
         lb = hardwareMap.dcMotor.get("backLeft");
         lf = hardwareMap.dcMotor.get("frontLeft");
         rb = hardwareMap.dcMotor.get("backRight");
@@ -85,5 +90,67 @@ public class DrivetrainClass {
     }
     double getLeftDistance() {
         return leftDistance.getDistance(DistanceUnit.INCH);
+    }
+
+    //Drive Stuff
+    //Preferably Do Not Touch
+    void drive(double direction, double velocity, double rotationVelocity) {
+        Wheels w = getWheels(direction, velocity, rotationVelocity);
+        lf.setPower(w.lf);
+        rf.setPower(w.rf);
+        lb.setPower(w.lr);
+        rb.setPower(w.rr);
+        telemetry.addData("Powers", String.format(Locale.US, "lf %.2f lr %.2f rf %.2f rr %.2f", w.lf, w.lr, w.rf, w.rr));
+    }
+    private static class Wheels {
+        double lf, lr, rf, rr;
+
+        Wheels(double lf, double rf, double lr, double rr) {
+            this.lf = lf;
+            this.rf = rf;
+            this.lr = lr;
+            this.rr = rr;
+        }
+    }
+    private Wheels getWheels(double direction, double velocity, double rotationVelocity) {
+        //final double vd = velocity;
+        //final double td = direction;
+        //final double vt = rotationVelocity;
+
+        double s = Math.sin(direction + Math.PI / 4.0);
+        double c = Math.cos(direction + Math.PI / 4.0);
+        double m = Math.max(Math.abs(s), Math.abs(c));
+        s /= m;
+        c /= m;
+
+        final double v1 = velocity * s + rotationVelocity;
+        final double v2 = velocity * c - rotationVelocity;
+        final double v3 = velocity * c + rotationVelocity;
+        final double v4 = velocity * s - rotationVelocity;
+
+        // Ensure that none of the values go over 1.0. If none of the provided values are
+        // over 1.0, just scale by 1.0 and keep all values.
+        double scale = ma(1.0, v1, v2, v3, v4);
+
+        return new Wheels(v1 / scale, v2 / scale, v3 / scale, v4 / scale);
+    }
+    private static double ma(double... xs) {
+        double ret = 0.0;
+        for (double x : xs) {
+            ret = Math.max(ret, Math.abs(x));
+        }
+        return ret;
+    }
+
+
+
+    //Drivetrain
+    void readEncoders(){
+        telemetry.addData(
+                "Encoders", "lf: " + lf.getCurrentPosition()
+                        + " lb: " + lb.getCurrentPosition()
+                        + " rf: " + rf.getCurrentPosition()
+                        + " rb: "+ rb.getCurrentPosition()
+        );
     }
 }
