@@ -28,13 +28,13 @@ public class DrivetrainClass {
     BNO055IMU imu;
     Orientation angles;
     void initializeDriveTrain(HardwareMap hardwareMap){
-        lb = hardwareMap.dcMotor.get("backLeft");
-        lf = hardwareMap.dcMotor.get("frontLeft");
-        rb = hardwareMap.dcMotor.get("backRight");
-        rf = hardwareMap.dcMotor.get("frontRight");
-        leftDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.leftDistance);
-        backDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.backDistance);
-        frontDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.frontDistance);
+        lb = hardwareMap.dcMotor.get("lb");
+        lf = hardwareMap.dcMotor.get("lf");
+        rb = hardwareMap.dcMotor.get("rb");
+        rf = hardwareMap.dcMotor.get("rf");
+        //leftDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.leftDistance);
+        //backDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.backDistance);
+        //frontDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.frontDistance);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -68,10 +68,6 @@ public class DrivetrainClass {
         lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lb.setTargetPosition(300);
-        lb.setPower(1);
 
         lb.setDirection(DcMotorSimple.Direction.REVERSE);
         lf.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -149,7 +145,7 @@ public class DrivetrainClass {
         telemetry.addData(
                 "Encoders", "lf: " + lf.getCurrentPosition()
                         + " lb: " + lb.getCurrentPosition()
-                        + " rf: " + rf.getCurrentPosition()
+                        //+ " rf: " + rf.getCurrentPosition()
                         + " rb: "+ rb.getCurrentPosition()
         );
     }
