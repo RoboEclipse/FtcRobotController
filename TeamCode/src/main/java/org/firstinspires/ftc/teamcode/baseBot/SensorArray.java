@@ -91,7 +91,9 @@ public class SensorArray extends OpMode
      */
     @Override
     public void loop() {
-        telemetry.addData("Encoder: ",  myRobot.lb.getCurrentPosition());
+        telemetry.addData("front: ",  myRobot.lf.getCurrentPosition());
+        telemetry.addData("right: ", myRobot.rb.getCurrentPosition());
+        telemetry.addData("left: ", myRobot.lb.getCurrentPosition());
         //myRobot.readEncoders();
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
