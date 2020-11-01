@@ -122,21 +122,38 @@ public class TensorFlowTest extends LinearOpMode {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
+                    String label = "";
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
-                      telemetry.addData("# Object Detected", updatedRecognitions.size());
-                      // step through the list of recognitions and display boundary info.
-                      int i = 0;
-                      for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
+                        for (Recognition recognition : updatedRecognitions) {
+                            telemetry.addData("# Object Detected", updatedRecognitions.size());
+                            double left = recognition.getLeft();
+                            double right = recognition.getRight();
+                            double width = right - left;
+                            double top = recognition.getTop();
+                            double bottom = recognition.getBottom();
+                            double height = Math.abs(top - bottom);
+                            if (4 * height <= width) {
+                                label = "single";
+                            } else {
+                                label = "quad";
+                            }
+                            telemetry.addData("Sample Label", updatedRecognitions.get(0).getLabel());
+                            telemetry.addData("My Label", label);
+                            telemetry.addData("width", width);
+                            telemetry.addData("height", height);
+                        }
                       }
+                      // step through the list of recognitions and display boundary info.
+                      /*for (Recognition recognition : updatedRecognitions) {
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", left, top);
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", right, bottom);
+                      }*/
                       telemetry.update();
                     }
                 }
             }
-        }
 
         if (tfod != null) {
             tfod.shutdown();
