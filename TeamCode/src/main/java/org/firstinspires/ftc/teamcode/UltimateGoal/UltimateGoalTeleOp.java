@@ -63,7 +63,7 @@ public class UltimateGoalTeleOp extends OpMode
      */
     @Override
     public void init() {
-        myRobot.initializeDriveTrain(hardwareMap);
+        myRobot.initializeDriveTrain(hardwareMap, telemetry);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -119,11 +119,10 @@ public class UltimateGoalTeleOp extends OpMode
 
         myRobot.drive(theta,  speedMultiplier*v_theta, rotationMultiplier*v_rotation);
 
-        /*
         Log.d("Encoders",
             myRobot.getOdometryWheels()
         );
-        */
+
 
     }
 
