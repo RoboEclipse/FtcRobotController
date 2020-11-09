@@ -27,7 +27,8 @@ public class DrivetrainClass {
     // The IMU sensor object
     BNO055IMU imu;
     Orientation angles;
-    public void initializeDriveTrain(HardwareMap hardwareMap){
+    public void initializeDriveTrain(HardwareMap hardwareMap, Telemetry telemetry_){
+        telemetry = telemetry_;
         lb = hardwareMap.dcMotor.get(names.leftBackMotor);
         lf = hardwareMap.dcMotor.get("lf");
         rb = hardwareMap.dcMotor.get("rb");

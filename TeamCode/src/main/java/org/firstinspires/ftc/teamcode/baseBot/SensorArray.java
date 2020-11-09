@@ -66,7 +66,7 @@ public class SensorArray extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        myRobot.initializeDriveTrain(hardwareMap);
+        myRobot.initializeDriveTrain(hardwareMap, telemetry);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
