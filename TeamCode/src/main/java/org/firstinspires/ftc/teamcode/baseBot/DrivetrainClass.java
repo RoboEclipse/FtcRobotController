@@ -21,14 +21,14 @@ public class DrivetrainClass {
     ExpansionHubMotor lbBR, lfBR, rbBR, rfBR;
     ExpansionHubEx expansionHub;
     DistanceSensor leftDistance,backDistance, frontDistance;
-    Configuration skystoneNames = new Configuration();
+    Configuration names = new Configuration();
     //Software
     private Telemetry telemetry;
     // The IMU sensor object
     BNO055IMU imu;
     Orientation angles;
-    void initializeDriveTrain(HardwareMap hardwareMap){
-        lb = hardwareMap.dcMotor.get("lb");
+    public void initializeDriveTrain(HardwareMap hardwareMap){
+        lb = hardwareMap.dcMotor.get(names.leftBackMotor);
         lf = hardwareMap.dcMotor.get("lf");
         rb = hardwareMap.dcMotor.get("rb");
         rf = hardwareMap.dcMotor.get("rf");
@@ -87,16 +87,18 @@ public class DrivetrainClass {
     double getLeftDistance() {
         return leftDistance.getDistance(DistanceUnit.INCH);
     }
-
+    public String getOdometryWheels(){
+        return "Front: " + lf.getCurrentPosition() + " Left: " + lb.getCurrentPosition() + " Right: " + rb.getCurrentPosition();
+    }
     //Drive Stuff
     //Preferably Do Not Touch
-    void drive(double direction, double velocity, double rotationVelocity) {
+    public void drive(double direction, double velocity, double rotationVelocity) {
         Wheels w = getWheels(direction, velocity, rotationVelocity);
         lf.setPower(w.lf);
         rf.setPower(w.rf);
         lb.setPower(w.lr);
         rb.setPower(w.rr);
-        telemetry.addData("Powers", String.format(Locale.US, "lf %.2f lr %.2f rf %.2f rr %.2f", w.lf, w.lr, w.rf, w.rr));
+        //telemetry.addData("Powers", String.format(Locale.US, "lf %.2f lr %.2f rf %.2f rr %.2f", w.lf, w.lr, w.rf, w.rr));
     }
     private static class Wheels {
         double lf, lr, rf, rr;
