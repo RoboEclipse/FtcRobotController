@@ -21,14 +21,14 @@ public class DrivetrainClass {
     ExpansionHubMotor lbBR, lfBR, rbBR, rfBR;
     ExpansionHubEx expansionHub;
     DistanceSensor leftDistance,backDistance, frontDistance;
-    Configuration skystoneNames = new Configuration();
+    Configuration names = new Configuration();
     //Software
     private Telemetry telemetry;
     // The IMU sensor object
     BNO055IMU imu;
     Orientation angles;
     public void initializeDriveTrain(HardwareMap hardwareMap){
-        lb = hardwareMap.dcMotor.get("lb");
+        lb = hardwareMap.dcMotor.get(names.leftBackMotor);
         lf = hardwareMap.dcMotor.get("lf");
         rb = hardwareMap.dcMotor.get("rb");
         rf = hardwareMap.dcMotor.get("rf");
