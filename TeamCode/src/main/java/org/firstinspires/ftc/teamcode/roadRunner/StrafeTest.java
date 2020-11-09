@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
-    public static double DISTANCE = 60; // in
+    public static double DISTANCE = 10; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
