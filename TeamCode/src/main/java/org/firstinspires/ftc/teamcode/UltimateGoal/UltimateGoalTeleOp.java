@@ -49,15 +49,7 @@ public class UltimateGoalTeleOp extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DrivetrainClass myRobot = new DrivetrainClass();
-    private double clawRotator = SKYSTONEConstants.straight;
-    private double clawPosition = SKYSTONEConstants.loosen;
-    private double leftFoundationPosition = SKYSTONEConstants.lDown;
-    private double rightFoundationPosition = SKYSTONEConstants.rDown;
-    private double collectorPower = 0;
-    private double modeSwitchPosition = SKYSTONEConstants.stackingMode;
-    private double capStonePosition = 0.33;
-    private double flClawPosition = SKYSTONEConstants.frontHigh;
-    private double frClawPosition = SKYSTONEConstants.frontLoosen;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -118,7 +110,10 @@ public class UltimateGoalTeleOp extends OpMode
         double v_rotation = gamepad1.right_stick_x;
 
         myRobot.drive(theta,  speedMultiplier*v_theta, rotationMultiplier*v_rotation);
-
+        /*Should look like:
+        2020-11-08 21:08:37.960 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
+        2020-11-08 21:08:37.964 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
+        */
         Log.d("Encoders",
             myRobot.getOdometryWheels()
         );
