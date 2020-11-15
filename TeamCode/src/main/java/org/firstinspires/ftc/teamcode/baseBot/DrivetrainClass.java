@@ -30,9 +30,9 @@ public class DrivetrainClass {
     public void initializeDriveTrain(HardwareMap hardwareMap, Telemetry telemetry_){
         telemetry = telemetry_;
         lb = hardwareMap.dcMotor.get(names.leftBackMotor);
-        lf = hardwareMap.dcMotor.get("lf");
-        rb = hardwareMap.dcMotor.get("rb");
-        rf = hardwareMap.dcMotor.get("rf");
+        lf = hardwareMap.dcMotor.get(names.leftFrontMotor);
+        rb = hardwareMap.dcMotor.get(names.rightBackMotor);
+        rf = hardwareMap.dcMotor.get(names.rightFrontMotor);
         //leftDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.leftDistance);
         //backDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.backDistance);
         //frontDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.frontDistance);
