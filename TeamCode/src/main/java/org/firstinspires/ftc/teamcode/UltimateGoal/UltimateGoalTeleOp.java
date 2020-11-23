@@ -33,13 +33,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.baseBot.DrivetrainClass;
-import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEAutonomousConstants;
-import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEClass;
-import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEConstants;
 
 
 @TeleOp(name="UltimateGoalTeleOp", group="Iterative Opmode")
@@ -48,7 +42,7 @@ public class UltimateGoalTeleOp extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private UltimateGoalClass myRobot = new UltimateGoalClass();
+    private UltimateGoalAttachments myRobot = new UltimateGoalAttachments();
 
     /*
      * Code to run ONCE when the driver hits INIT
