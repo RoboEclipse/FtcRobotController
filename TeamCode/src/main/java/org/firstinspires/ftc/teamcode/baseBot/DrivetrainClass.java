@@ -141,6 +141,10 @@ public class DrivetrainClass {
         return ret;
     }
 
+    public double getAngle() {
+        return imu.getAngularOrientation().firstAngle;
+    }
+
 
 
     //Drivetrain
