@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.baseBot.DrivetrainClass;
 import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEConstants;
 
-public class UltimateGoalClass extends DrivetrainClass {
+public class UltimateGoalAttachmentsClass extends DrivetrainClass {
     private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor flywheelMotor = null;
