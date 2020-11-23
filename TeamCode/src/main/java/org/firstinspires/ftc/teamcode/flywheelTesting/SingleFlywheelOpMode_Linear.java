@@ -87,7 +87,7 @@ public class SingleFlywheelOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-//            Set flywheel power based on press
+            //Set flywheel power based on press
             if (gamepad1.a){
                 flywheelPower = -1;
             }
@@ -95,7 +95,7 @@ public class SingleFlywheelOpMode_Linear extends LinearOpMode {
                 flywheelPower = 0;
             }
 
-//            Use servo to push the ring into fly wheel
+            //Use servo to push the ring into fly wheel
             if (gamepad1.x){
                 ringPusherPos = 0.4;
             }
