@@ -2,16 +2,14 @@ package org.firstinspires.ftc.teamcode.UltimateGoal;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.baseBot.DrivetrainClass;
-import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEConstants;
+import org.firstinspires.ftc.teamcode.baseBot.Drivetrain;
 
-public class UltimateGoalAttachments extends DrivetrainClass {
+public class Attachments extends Drivetrain {
     private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor flywheelMotor = null;

@@ -42,7 +42,7 @@ public class UltimateGoalTeleOp extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private UltimateGoalAttachments myRobot = new UltimateGoalAttachments();
+    private Attachments myRobot = new Attachments();
 
     /*
      * Code to run ONCE when the driver hits INIT
