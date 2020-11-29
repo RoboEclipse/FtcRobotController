@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal;
 
-class UltimateGoalConfiguration {
+class Configuration {
     //Drive Motors
     final String backLeftMotor = "backLeft";
     final String frontLeftMotor = "frontLeft";
