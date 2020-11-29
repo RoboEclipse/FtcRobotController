@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.baseBot;
 
-class Configuration {
+class TestBotConfiguration {
     //Drive Motors
     final String leftBackMotor = "lb";
     final String leftFrontMotor = "lf";

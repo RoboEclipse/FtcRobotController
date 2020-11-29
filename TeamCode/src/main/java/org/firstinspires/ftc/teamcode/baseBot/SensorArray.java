@@ -29,14 +29,9 @@
 
 package org.firstinspires.ftc.teamcode.baseBot;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.baseBot.DrivetrainClass;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -58,7 +53,7 @@ public class SensorArray extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DrivetrainClass myRobot = new DrivetrainClass();
+    private Drivetrain myRobot = new Drivetrain();
 
     /*
      * Code to run ONCE when the driver hits INIT

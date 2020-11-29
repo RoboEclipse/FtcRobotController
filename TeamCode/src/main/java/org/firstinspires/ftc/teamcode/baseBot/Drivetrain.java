@@ -10,18 +10,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEClass;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
-import java.util.Locale;
-
-public class DrivetrainClass {
+public class Drivetrain {
     DcMotor lb, lf, rb, rf;
     ExpansionHubMotor lbBR, lfBR, rbBR, rfBR;
     ExpansionHubEx expansionHub;
     DistanceSensor leftDistance,backDistance, frontDistance;
-    Configuration names = new Configuration();
+    TestBotConfiguration names = new TestBotConfiguration();
     //Software
     private Telemetry telemetry;
     // The IMU sensor object
@@ -30,9 +27,9 @@ public class DrivetrainClass {
     public void initializeDriveTrain(HardwareMap hardwareMap, Telemetry telemetry_){
         telemetry = telemetry_;
         lb = hardwareMap.dcMotor.get(names.leftBackMotor);
-        lf = hardwareMap.dcMotor.get("lf");
-        rb = hardwareMap.dcMotor.get("rb");
-        rf = hardwareMap.dcMotor.get("rf");
+        lf = hardwareMap.dcMotor.get(names.leftFrontMotor);
+        rb = hardwareMap.dcMotor.get(names.rightBackMotor);
+        rf = hardwareMap.dcMotor.get(names.rightFrontMotor);
         //leftDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.leftDistance);
         //backDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.backDistance);
         //frontDistance = hardwareMap.get(DistanceSensor.class, skystoneNames.frontDistance);
@@ -139,6 +136,10 @@ public class DrivetrainClass {
             ret = Math.max(ret, Math.abs(x));
         }
         return ret;
+    }
+
+    public double getAngle() {
+        return imu.getAngularOrientation().firstAngle;
     }
 
 
