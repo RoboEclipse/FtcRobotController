@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.roadRunner;
+package org.firstinspires.ftc.teamcode.roadRunner.drive;
 
 import androidx.annotation.NonNull;
 
@@ -36,15 +36,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.getMotorVelocityF;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.roadRunner.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.getMotorVelocityF;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
