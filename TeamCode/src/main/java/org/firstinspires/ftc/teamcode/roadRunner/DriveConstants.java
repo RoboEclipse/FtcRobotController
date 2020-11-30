@@ -22,7 +22,7 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     public static final double TICKS_PER_REV = 1440;
-    public static final double MAX_RPM = 1;
+    public static final double MAX_RPM = 150;
 
     /*
      * Set the first flag appropriately. If using the built-in motor velocity PID, update
@@ -49,9 +49,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
+    public static double kV = 1 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0.002;
+    public static double kStatic = 1;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
