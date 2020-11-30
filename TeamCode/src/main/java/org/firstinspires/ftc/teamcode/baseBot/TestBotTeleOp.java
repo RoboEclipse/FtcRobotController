@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.baseBot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
+@TeleOp(name="TestBotTeleOp", group="Iterative Opmode")
 public class TestBotTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private Drivetrain myRobot = new Drivetrain();
@@ -21,7 +24,7 @@ public class TestBotTeleOp extends OpMode {
 
     public void loop() {
         //Drive motor controls
-        double lx = -gamepad1.left_stick_x;
+        double lx = gamepad1.left_stick_x;
         double ly = -gamepad1.left_stick_y;
         double speedMultiplier = 1;
         double rotationMultiplier = .8;
