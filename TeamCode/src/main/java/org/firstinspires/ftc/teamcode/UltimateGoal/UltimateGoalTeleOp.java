@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="UltimateGoalTeleOp", group="Iterative Opmode")
+@TeleOp(name="TeleOp", group="Iterative Opmode")
 //@Disabled
 public class UltimateGoalTeleOp extends OpMode
 {
@@ -75,7 +75,7 @@ public class UltimateGoalTeleOp extends OpMode
     @Override
     public void loop() {
         //Drive motor controls
-        double lx = -gamepad1.left_stick_x;
+        double lx = gamepad1.left_stick_x;
         double ly = -gamepad1.left_stick_y;
         double speedMultiplier = 1;
         double rotationMultiplier = .8;
