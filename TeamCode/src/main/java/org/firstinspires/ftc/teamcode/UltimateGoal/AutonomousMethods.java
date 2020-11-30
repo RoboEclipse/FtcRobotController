@@ -16,4 +16,6 @@ abstract public class AutonomousMethods extends LinearOpMode {
     public void initializeAutonomousAttachments(HardwareMap hardwareMap, Telemetry telemetry) {
         myRobot.initialize(hardwareMap, telemetry);
     }
+
+
 }
