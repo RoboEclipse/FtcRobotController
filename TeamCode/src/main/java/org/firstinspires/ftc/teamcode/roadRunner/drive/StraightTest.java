@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.roadRunner;
+package org.firstinspires.ftc.teamcode.roadRunner.drive;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  */
 @Config
 @Autonomous(group = "drive")
-public class StrafeTest extends LinearOpMode {
+public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 10; // in
 
     @Override
@@ -19,7 +19,7 @@ public class StrafeTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(DISTANCE)
+                .forward(DISTANCE)
                 .build();
 
         waitForStart();
