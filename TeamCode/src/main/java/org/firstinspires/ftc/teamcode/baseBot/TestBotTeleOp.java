@@ -30,22 +30,22 @@ public class TestBotTeleOp extends OpMode {
         double rotationMultiplier = .8;
 
         if(gamepad1.dpad_up){
-            ly=1;
-            lx=0;
-            speedMultiplier = 0.3;
-        }
-        else if(gamepad1.dpad_down){
             ly=-1;
             lx=0;
             speedMultiplier = 0.3;
         }
+        else if(gamepad1.dpad_down){
+            ly=1;
+            lx=0;
+            speedMultiplier = 0.3;
+        }
         if(gamepad1.dpad_left){
-            lx=-1;
+            lx=1;
             ly=0;
             speedMultiplier = 0.6;
         }
         else if(gamepad1.dpad_right){
-            lx=1;
+            lx=-1;
             ly=0;
             speedMultiplier = 0.6;
         }
