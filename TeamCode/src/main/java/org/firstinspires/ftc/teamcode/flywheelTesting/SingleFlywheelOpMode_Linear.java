@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="FLywheel Opmode", group="Linear Opmode")
+@TeleOp(name="Flywheel Opmode", group="Linear Opmode")
 //@Disabled
 public class SingleFlywheelOpMode_Linear extends LinearOpMode {
 
