@@ -22,7 +22,7 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     public static final double TICKS_PER_REV = 1440;
-    public static final double MAX_RPM = 150;
+    public static final double MAX_RPM = 800;
 
     /*
      * Set the first flag appropriately. If using the built-in motor velocity PID, update
@@ -39,7 +39,7 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2; // in
+    public static double WHEEL_RADIUS = 0.75; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 14; // in
 
@@ -49,9 +49,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1 / rpmToVelocity(MAX_RPM);
+    public static double kV = 0.01564;
     public static double kA = 0.002;
-    public static double kStatic = 1;
+    public static double kStatic = 0.03430;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -62,7 +62,7 @@ public class DriveConstants {
      * forces acceleration-limited profiling). All distance units are inches.
      */
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            10.0, 10.0, 0.0,
+            50.0, 60.0, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 
