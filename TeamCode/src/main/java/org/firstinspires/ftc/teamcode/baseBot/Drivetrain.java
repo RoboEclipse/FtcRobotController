@@ -14,16 +14,16 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
 public class Drivetrain {
-    DcMotor lb, lf, rb, rf;
-    ExpansionHubMotor lbBR, lfBR, rbBR, rfBR;
-    ExpansionHubEx expansionHub;
-    DistanceSensor leftDistance,backDistance, frontDistance;
-    TestBotConfiguration names = new TestBotConfiguration();
+    public DcMotor lb, lf, rb, rf;
+    public ExpansionHubMotor lbBR, lfBR, rbBR, rfBR;
+    public ExpansionHubEx expansionHub;
+    public DistanceSensor leftDistance,backDistance, frontDistance;
+    public TestBotConfiguration names = new TestBotConfiguration();
     //Software
     private Telemetry telemetry;
     // The IMU sensor object
-    BNO055IMU imu;
-    Orientation angles;
+    public BNO055IMU imu;
+    public Orientation angles;
     public void initializeDriveTrain(HardwareMap hardwareMap, Telemetry telemetry_){
         telemetry = telemetry_;
         lb = hardwareMap.dcMotor.get(names.leftBackMotor);
