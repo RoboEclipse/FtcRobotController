@@ -17,6 +17,7 @@ public class Attachments extends Drivetrain {
 
     //Backend
     void initialize(HardwareMap hardwareMap, Telemetry telemetry_){
+
         telemetry = telemetry_;
         FtcDashboard dashboard = FtcDashboard.getInstance();
         flywheelMotor  = hardwareMap.get(DcMotor.class, "flywheel_motor");
