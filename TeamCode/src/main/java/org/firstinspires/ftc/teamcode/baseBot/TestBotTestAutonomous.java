@@ -16,19 +16,7 @@ public class TestBotTestAutonomous extends AutonomousMethods {
     public void runOpMode() {
         initializeAutonomousDrivetrain(hardwareMap, telemetry);
         // Wait for the game to start (driver presses PLAY)
-        //methods.waitForStart2();
-        while (!isStarted()) {
-            synchronized (this) {
-                try {
-                    //telemetry.addData("Distance", skystoneClass.getBackDistance() + "");
-                    telemetry.update();
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }
+        waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
