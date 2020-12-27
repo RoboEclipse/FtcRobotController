@@ -1,12 +1,17 @@
-package org.firstinspires.ftc.teamcode.roadRunner.drive;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import java.util.Vector;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+import java.util.Vector;
+@Config
+@Autonomous(group = "drive")
 public class blueLeftAutonomousTest extends LinearOpMode {
     @Override
     public void runOpMode() {

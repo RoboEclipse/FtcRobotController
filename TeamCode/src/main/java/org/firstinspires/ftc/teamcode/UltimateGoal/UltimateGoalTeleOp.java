@@ -119,15 +119,15 @@ public class UltimateGoalTeleOp extends OpMode
         }
 
         //Use servo to push the ring into fly wheel
-        if (gamepad1.x){
+        /* if (gamepad1.x){
             ringPusherPos = 0.4;
         }
         if (gamepad1.y) {
             ringPusherPos = 0.6;
-        }
+        } */
 
         myRobot.runFlywheelMotor(flywheelPower);
-        myRobot.setRingPusher(ringPusherPos);
+        // myRobot.setRingPusher(ringPusherPos);
 
         /*Should look like:
         2020-11-08 21:08:37.960 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
