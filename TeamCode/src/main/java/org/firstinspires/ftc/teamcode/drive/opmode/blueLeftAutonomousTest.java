@@ -32,6 +32,18 @@ public class blueLeftAutonomousTest extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-42, 36), 0) //Goes forward to detect ring
                 .build();
 
+        waitForStart();
+
+        if(isStopRequested()) return;
+
+        drive.followTrajectory(pickupFirstWobble);
+        //Servo grab wobble
+        drive.followTrajectory(toRing);
+        //Detection happens here
+        wobbleDropx = 36;
+        wobbleDropy = 48;
+
+        //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
                 .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
                 .splineToSplineHeading(new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0)), 0) //Drives to correct spot for wobble drop off
@@ -58,16 +70,6 @@ public class blueLeftAutonomousTest extends LinearOpMode {
                 .splineTo(new Vector2d(12, 36), 0)
                 .build();
 
-        waitForStart();
-
-        if(isStopRequested()) return;
-
-        drive.followTrajectory(pickupFirstWobble);
-        //Servo grab wobble
-        drive.followTrajectory(toRing);
-        //Detection happens here
-        wobbleDropx = 36;
-        wobbleDropy = 48;
         drive.followTrajectory(dropFirstWobble);
         //Servo drop wobble
         drive.followTrajectory(pickupSecondWobble);
