@@ -13,12 +13,16 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.baseBot.Drivetrain;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -28,6 +32,42 @@ abstract public class AutonomousMethods extends LinearOpMode {
     TelemetryPacket packet = new TelemetryPacket();
     private Orientation angles;
 
+    //Tensorflow detection stuff
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+    private static final String VUFORIA_KEY =
+            "AZU6IGT/////AAABmejCcqZy6k3el50rc42EGZ12WUI69Jz0IiavcLq/8JjxlUITrNJkegwqzTp6kR52Z+03jWcxJNGGH4dvST5xv+KXIlN/USxGznxymvRbPq6jVZych8Sp1YUVrWtin3C/qBwy5tLTs8uMRR2gT/zQfSM+AJXinLiuVTLxCas4XFfdErJdz43PDk8eoWzNYvhOM5S31HotPyZg411rgSyMNRcmzE1x2iAPRSN6JCqbDxKqBfk6m51QW0krJsWy2ECF2Ue3XI8Ro0yA3JoUo+PhJ29jRsYcCliDnydTnYQvZYwrFU0DPUFAfJHhPI4SEy4kFxuKWvYgQpUTFdiFxHHRX94Xei6GbRp6A5H4gmUfL2vz";
+    public VuforiaLocalizer vuforia;
+    public TFObjectDetector tfod;
+
+    public void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    public void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
     public void initializeAutonomousDrivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
         myRobot.initializeDriveTrain(hardwareMap, telemetry);
     }
@@ -36,14 +76,14 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.initialize(hardwareMap, telemetry);
     }
 
-    void setModeAllDrive(DcMotor.RunMode mode){
+    public void setModeAllDrive(DcMotor.RunMode mode){
         myRobot.lb.setMode(mode);
         myRobot.lf.setMode(mode);
         myRobot.rb.setMode(mode);
         myRobot.rf.setMode(mode);
     }
 
-    void runMotors (double leftPower, double rightPower){
+    public void runMotors (double leftPower, double rightPower){
         myRobot.lb.setPower(leftPower);
         myRobot.lf.setPower(leftPower);
         myRobot.rb.setPower(rightPower);

@@ -5,9 +5,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-public class blueRightAutonomousTest extends LinearOpMode {
+public class blueRightAutonomousTest extends AutonomousMethods {
     @Override
     public void runOpMode() {
         int wobbleDropx = 0;

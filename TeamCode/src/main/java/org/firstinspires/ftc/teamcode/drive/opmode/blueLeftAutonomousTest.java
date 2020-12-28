@@ -7,18 +7,28 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+import java.util.List;
 import java.util.Vector;
 @Config
 @Autonomous(group = "drive")
-public class blueLeftAutonomousTest extends LinearOpMode {
+public class blueLeftAutonomousTest extends AutonomousMethods {
     @Override
     public void runOpMode() {
         int wobbleDropx = 0;
         int wobbleDropy = 0;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        initVuforia();
+        initTfod();
+
+        if (tfod != null) { //Maybe move into Autonomous Methods
+            tfod.activate();
+        }
 
         Pose2d startPose = new Pose2d(-63, 48, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
@@ -38,8 +48,25 @@ public class blueLeftAutonomousTest extends LinearOpMode {
 
         drive.followTrajectory(pickupFirstWobble);
         //Servo grab wobble
+        sleep(1000);
         drive.followTrajectory(toRing);
+
         //Detection happens here
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            String label = "";
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                for (Recognition recognition : updatedRecognitions) {
+                    telemetry.addData("Sample Label", updatedRecognitions.get(0).getLabel());
+                }
+            } else {
+                telemetry.addData("Sample Label", "Nothing detected");
+            }
+            telemetry.update();
+        }
+
         wobbleDropx = 36;
         wobbleDropy = 48;
 
