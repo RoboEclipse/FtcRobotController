@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -22,9 +23,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.baseBot.Drivetrain;
+import org.jetbrains.annotations.NotNull;
 import org.openftc.revextensions2.RevBulkData;
+
+import java.util.List;
 
 abstract public class AutonomousMethods extends LinearOpMode {
     Attachments myRobot = new Attachments();
@@ -40,6 +45,14 @@ abstract public class AutonomousMethods extends LinearOpMode {
             "AZU6IGT/////AAABmejCcqZy6k3el50rc42EGZ12WUI69Jz0IiavcLq/8JjxlUITrNJkegwqzTp6kR52Z+03jWcxJNGGH4dvST5xv+KXIlN/USxGznxymvRbPq6jVZych8Sp1YUVrWtin3C/qBwy5tLTs8uMRR2gT/zQfSM+AJXinLiuVTLxCas4XFfdErJdz43PDk8eoWzNYvhOM5S31HotPyZg411rgSyMNRcmzE1x2iAPRSN6JCqbDxKqBfk6m51QW0krJsWy2ECF2Ue3XI8Ro0yA3JoUo+PhJ29jRsYcCliDnydTnYQvZYwrFU0DPUFAfJHhPI4SEy4kFxuKWvYgQpUTFdiFxHHRX94Xei6GbRp6A5H4gmUfL2vz";
     public VuforiaLocalizer vuforia;
     public TFObjectDetector tfod;
+
+    public void initializeAutonomousDrivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
+        myRobot.initializeDriveTrain(hardwareMap, telemetry);
+    }
+
+    public void initializeAutonomousAttachments(HardwareMap hardwareMap, Telemetry telemetry) {
+        myRobot.initialize(hardwareMap, telemetry);
+    }
 
     public void initVuforia() {
         /*
@@ -68,12 +81,51 @@ abstract public class AutonomousMethods extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    public void initializeAutonomousDrivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
-        myRobot.initializeDriveTrain(hardwareMap, telemetry);
-    }
+    @NotNull
+    public Pose2d getWobbleDropPose(boolean isRed) {
+        //Detection happens here
+        String detection = "";
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            String label = "";
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                detection = updatedRecognitions.get(0).getLabel();
+                telemetry.addData("Sample Label", detection);
+            } else {
+                detection = "none";
+                telemetry.addData("Sample Label", "Nothing detected");
+            }
+            telemetry.update();
+        }
 
-    public void initializeAutonomousAttachments(HardwareMap hardwareMap, Telemetry telemetry) {
-        myRobot.initialize(hardwareMap, telemetry);
+        int wobbleDropx = 0;
+        int wobbleDropy = 0;
+        if (!isRed) {
+            if (detection.equals("Quad")) {
+                wobbleDropx = 60;
+                wobbleDropy = 60;
+            } else if (detection.equals("Single")) {
+                wobbleDropx = 36;
+                wobbleDropy = 36;
+            } else {
+                wobbleDropx = 12;
+                wobbleDropy = 60;
+            }
+        } else {
+            if (detection.equals("Quad")) {
+                wobbleDropx = 60;
+                wobbleDropy = -60;
+            } else if (detection.equals("Single")) {
+                wobbleDropx = 36;
+                wobbleDropy = -36;
+            } else {
+                wobbleDropx = 12;
+                wobbleDropy = -60;
+            }
+        }
+        return new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
     }
 
     public void setModeAllDrive(DcMotor.RunMode mode){
