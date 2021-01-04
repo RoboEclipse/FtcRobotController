@@ -18,8 +18,9 @@ import java.util.Vector;
 public class blueLeftAutonomousDetection extends AutonomousMethods {
     @Override
     public void runOpMode() {
-        int wobbleDropx = 0;
-        int wobbleDropy = 0;
+        int wobbleDropx;
+        int wobbleDropy;
+        String detection = "";
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -58,17 +59,25 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
             String label = "";
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                for (Recognition recognition : updatedRecognitions) {
-                    telemetry.addData("Sample Label", updatedRecognitions.get(0).getLabel());
-                }
+                detection = updatedRecognitions.get(0).getLabel();
+                telemetry.addData("Sample Label", detection);
             } else {
+                detection = "none";
                 telemetry.addData("Sample Label", "Nothing detected");
             }
             telemetry.update();
         }
 
-        wobbleDropx = 36;
-        wobbleDropy = 48;
+        if (detection.equals("Quad")) {
+            wobbleDropx = 60;
+            wobbleDropy = 60;
+        } else if (detection.equals("Single")){
+            wobbleDropx = 36;
+            wobbleDropy = 36;
+        } else {
+            wobbleDropx = 12;
+            wobbleDropy = 60;
+        }
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
@@ -86,7 +95,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
                 .build();
 
         Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
-                .splineToSplineHeading(new Pose2d(12, 12, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(-9, 12, Math.toRadians(0)), 0)
                 .build();
 
         Trajectory pickup = drive.trajectoryBuilder(goShoot.end())
