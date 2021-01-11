@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Vector;
@@ -18,9 +19,7 @@ import java.util.Vector;
 public class blueLeftAutonomousDetection extends AutonomousMethods {
     @Override
     public void runOpMode() {
-        int wobbleDropx;
-        int wobbleDropy;
-        String detection = "";
+        boolean isRed = false;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -51,38 +50,12 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         //Servo grab wobble
         sleep(1000);
         drive.followTrajectory(toRing);
-
-        //Detection happens here
-        if (tfod != null) {
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            String label = "";
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                detection = updatedRecognitions.get(0).getLabel();
-                telemetry.addData("Sample Label", detection);
-            } else {
-                detection = "none";
-                telemetry.addData("Sample Label", "Nothing detected");
-            }
-            telemetry.update();
-        }
-
-        if (detection.equals("Quad")) {
-            wobbleDropx = 60;
-            wobbleDropy = 60;
-        } else if (detection.equals("Single")){
-            wobbleDropx = 36;
-            wobbleDropy = 36;
-        } else {
-            wobbleDropx = 12;
-            wobbleDropy = 60;
-        }
+        Pose2d wobbleDropPose = getWobbleDropPose(isRed);
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
                 .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
-                .splineToSplineHeading(new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0)), 0) //Drives to correct spot for wobble drop off
+                .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
                 .build();
 
         Trajectory pickupSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
@@ -91,7 +64,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
 
         Trajectory dropSecondWobble = drive.trajectoryBuilder(pickupSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
                 .splineToSplineHeading(new Pose2d(-36, 54, Math.toRadians(0)), 0) //Drives to the left
-                .splineToSplineHeading(new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0)), 0) //Drives back to correct spot for wobble drop off
+                .splineToSplineHeading(wobbleDropPose, 0) //Drives back to correct spot for wobble drop off
                 .build();
 
         Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
