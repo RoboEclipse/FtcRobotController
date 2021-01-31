@@ -37,15 +37,13 @@ abstract public class AutonomousMethods extends LinearOpMode {
     TelemetryPacket packet = new TelemetryPacket();
     private Orientation angles;
 
-    //Tensorflow detection stuff
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
-    private static final String VUFORIA_KEY =
-            "AZU6IGT/////AAABmejCcqZy6k3el50rc42EGZ12WUI69Jz0IiavcLq/8JjxlUITrNJkegwqzTp6kR52Z+03jWcxJNGGH4dvST5xv+KXIlN/USxGznxymvRbPq6jVZych8Sp1YUVrWtin3C/qBwy5tLTs8uMRR2gT/zQfSM+AJXinLiuVTLxCas4XFfdErJdz43PDk8eoWzNYvhOM5S31HotPyZg411rgSyMNRcmzE1x2iAPRSN6JCqbDxKqBfk6m51QW0krJsWy2ECF2Ue3XI8Ro0yA3JoUo+PhJ29jRsYcCliDnydTnYQvZYwrFU0DPUFAfJHhPI4SEy4kFxuKWvYgQpUTFdiFxHHRX94Xei6GbRp6A5H4gmUfL2vz";
-    public VuforiaLocalizer vuforia;
-    public TFObjectDetector tfod;
+    public boolean opModeStatus(){
+        return opModeIsActive();
+    }
 
+
+
+    // Initializations
     public void initializeAutonomousDrivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
         myRobot.initializeDriveTrain(hardwareMap, telemetry);
     }
@@ -54,31 +52,12 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.initialize(hardwareMap, telemetry);
     }
 
-    public void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    // Game specific stuff (NEEDS ATTACHMENTS)
+    public void setWobbleMotor(double speed, double position, double timeoutS){
+        int newTarget;
 
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    public void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
     @NotNull
@@ -90,7 +69,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
             // the last time that call was made.
             String label = "";
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
+            if ((updatedRecognitions != null) && (updatedRecognitions.size() != 0)) {
                 detection = updatedRecognitions.get(0).getLabel();
                 telemetry.addData("Sample Label", detection);
             } else {
@@ -128,6 +107,9 @@ abstract public class AutonomousMethods extends LinearOpMode {
         return new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
     }
 
+
+
+    // Drive stuff
     public void setModeAllDrive(DcMotor.RunMode mode){
         myRobot.lb.setMode(mode);
         myRobot.lf.setMode(mode);
@@ -147,6 +129,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
             motor.setTargetPosition((int) Math.round(ticks));
         }
     }
+
     private boolean notCloseEnough(int tolerance, DcMotor...motors){
         for(DcMotor motor : motors){
             if(Math.abs(motor.getCurrentPosition()-motor.getTargetPosition()) > tolerance){
@@ -215,7 +198,9 @@ abstract public class AutonomousMethods extends LinearOpMode {
         }
     }
 
-    //IMU Stuff
+
+
+    // IMU Stuff
     public double getHorizontalAngle(){
         angles = myRobot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double output = angles.firstAngle;
@@ -247,8 +232,41 @@ abstract public class AutonomousMethods extends LinearOpMode {
         return output;
     }
 
-    public boolean opModeStatus(){
-        return opModeIsActive();
+
+
+    // Tensorflow detection stuff (NEEDS CAMERA)
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+    private static final String VUFORIA_KEY =
+            "AZU6IGT/////AAABmejCcqZy6k3el50rc42EGZ12WUI69Jz0IiavcLq/8JjxlUITrNJkegwqzTp6kR52Z+03jWcxJNGGH4dvST5xv+KXIlN/USxGznxymvRbPq6jVZych8Sp1YUVrWtin3C/qBwy5tLTs8uMRR2gT/zQfSM+AJXinLiuVTLxCas4XFfdErJdz43PDk8eoWzNYvhOM5S31HotPyZg411rgSyMNRcmzE1x2iAPRSN6JCqbDxKqBfk6m51QW0krJsWy2ECF2Ue3XI8Ro0yA3JoUo+PhJ29jRsYcCliDnydTnYQvZYwrFU0DPUFAfJHhPI4SEy4kFxuKWvYgQpUTFdiFxHHRX94Xei6GbRp6A5H4gmUfL2vz";
+    public VuforiaLocalizer vuforia;
+    public TFObjectDetector tfod;
+
+    public void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
 
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    public void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
 }

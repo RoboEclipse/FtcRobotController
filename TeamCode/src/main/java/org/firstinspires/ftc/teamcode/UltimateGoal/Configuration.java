@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal;
 
-class Configuration {
+public class Configuration {
     //Drive Motors
-    final String backLeftMotor = "backLeft";
-    final String frontLeftMotor = "frontLeft";
-    final String backRightMotor = "backRight";
-    final String frontRightMotor = "frontRight";
+    public final String leftBackMotor = "lb";
+    public final String leftFrontMotor = "lf";
+    public final String rightBackMotor = "rb";
+    public final String rightFrontMotor = "rf";
 
     //Attachment motors
     final String collectionMotor = "collectionMotor";
@@ -15,6 +15,9 @@ class Configuration {
 
     //Tele-Op Servos
     final String wobbleGoalServo = "wobbleGoalServo";
+    final String ringPushServo = "ringPushServo";
+    final String elevatorServo = "elevatorServo";
+    final String tiltServo = "tiltServo";
 
     //Distance Sensors
     final String frontDistance = "frontDistance";
