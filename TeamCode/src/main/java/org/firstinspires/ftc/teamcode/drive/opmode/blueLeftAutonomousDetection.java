@@ -33,11 +33,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         Pose2d startPose = new Pose2d(-63, 48, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
-        Trajectory pickupFirstWobble = drive.trajectoryBuilder(startPose)
-                .splineToConstantHeading(new Vector2d(-48, 48), 0) //Goes forward
-                .build();
-
-        Trajectory toRing = drive.trajectoryBuilder(pickupFirstWobble.end())
+        Trajectory toRing = drive.trajectoryBuilder(startPose)
                 .splineToConstantHeading(new Vector2d(-48, 36), 0) //Goes right
                 .splineToConstantHeading(new Vector2d(-42, 36), 0) //Goes forward to detect ring
                 .build();
@@ -45,8 +41,6 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         waitForStart();
 
         if(isStopRequested()) return;
-
-        drive.followTrajectory(pickupFirstWobble);
         //Servo grab wobble
         sleep(1000);
         drive.followTrajectory(toRing);
@@ -55,22 +49,26 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
                 .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
+                .addTemporalMarker(1, () -> {
+                    telemetry.addData("Test", "This should run 1 second after the robot goes to drop 1st wobble");
+                    telemetry.update();
+                })
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
                 .build();
-
+        //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory pickupSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
                 .splineTo(new Vector2d(-48, 24), 72) //Drive back to pick-up second wobble goal
                 .build();
-
+        //Wobble pick up should be at the end of the previous or at the beginning of the next one
         Trajectory dropSecondWobble = drive.trajectoryBuilder(pickupSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
                 .splineToSplineHeading(new Pose2d(-36, 54, Math.toRadians(0)), 0) //Drives to the left
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives back to correct spot for wobble drop off
                 .build();
-
+        //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
                 .splineToSplineHeading(new Pose2d(-9, 12, Math.toRadians(0)), 0)
                 .build();
-
+        //Start spinning collection motors in the next trajectory
         Trajectory pickup = drive.trajectoryBuilder(goShoot.end())
                 .splineTo(new Vector2d(-24, 36), 18)
                 .build();
