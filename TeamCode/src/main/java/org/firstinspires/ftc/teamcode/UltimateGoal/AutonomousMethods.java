@@ -123,7 +123,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
             // the last time that call was made.
             String label = "";
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if ((updatedRecognitions != null) && (updatedRecognitions.size() != 0)) {
+            if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
                 detection = updatedRecognitions.get(0).getLabel();
                 telemetry.addData("Sample Label", detection);
             } else {
