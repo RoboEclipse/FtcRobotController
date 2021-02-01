@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal;
 
+import android.graphics.Bitmap;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,30 +15,45 @@ import org.firstinspires.ftc.teamcode.baseBot.Drivetrain;
 public class Attachments extends Drivetrain {
     private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
-    // private DcMotor flywheelMotor = null;
-    private DcMotor leftFlywheelMotor = null;
-    private DcMotor rightFlywheelMotor = null;
-    // private Servo ringPusher = null;
+    public Configuration names = new Configuration();
+    public DcMotor collectionMotor, wobbleGoalMotor, leftFlywheelMotor, rightFlywheelMotor;
+    public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo;
 
     //Backend
     void initialize(HardwareMap hardwareMap, Telemetry telemetry_){
-
         telemetry = telemetry_;
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        // flywheelMotor  = hardwareMap.get(DcMotor.class, "flywheel_motor");
-        leftFlywheelMotor = hardwareMap.get(DcMotor.class, "flywheel_motor_left");
-        rightFlywheelMotor = hardwareMap.get(DcMotor.class, "flywheel_motor_right");
-        // ringPusher = hardwareMap.servo.get("ring_pusher");
-        // flywheelMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        // Motors
+        collectionMotor = hardwareMap.dcMotor.get(names.collectionMotor);
+        wobbleGoalMotor = hardwareMap.dcMotor.get(names.wobbleGoalMotor);
+        leftFlywheelMotor = hardwareMap.dcMotor.get(names.leftShooterMotor);
+        rightFlywheelMotor = hardwareMap.dcMotor.get(names.rightShooterMotor);
+
+        // Servos
+        wobbleGoalServo = hardwareMap.servo.get(names.wobbleGoalServo);
+        ringPushServo = hardwareMap.servo.get(names.ringPushServo);
+        elevatorServo = hardwareMap.servo.get(names.elevatorServo);
+        tiltServo = hardwareMap.servo.get(names.tiltServo);
+
+        // Motor initalization
+        collectionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFlywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFlywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFlywheelMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFlywheelMotor.setDirection(DcMotor.Direction.FORWARD);
-        // flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFlywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFlywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        collectionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //HardwareMaps
         initializeDriveTrain(hardwareMap, telemetry_);
+    }
 
+    void setWobbleClaw(double position) {
+        wobbleGoalServo.setPosition(position);
     }
 
     void runFlywheelMotor(double power) {
