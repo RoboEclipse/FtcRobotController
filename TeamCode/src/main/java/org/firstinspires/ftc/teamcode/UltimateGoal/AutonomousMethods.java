@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.analysis.function.Constant;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -36,6 +37,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     TelemetryPacket packet = new TelemetryPacket();
     private Orientation angles;
+    private ElapsedTime runtime = new ElapsedTime();
 
     public boolean opModeStatus(){
         return opModeIsActive();
@@ -55,9 +57,61 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
 
     // Game specific stuff (NEEDS ATTACHMENTS)
-    public void setWobbleMotor(double speed, double position, double timeoutS){
-        int newTarget;
+    public void grabWobble() {
+        myRobot.wobbleGoalServo.setPosition(Constants.wgsClose);
+        sleep(250);
+        setWobbleMotor(0.8, false, 2);
+    }
 
+    public void dropWobble() {
+        setWobbleMotor(0.8, true, 2);
+        sleep(250);
+        myRobot.wobbleGoalServo.setPosition(Constants.wgsOpen);
+    }
+
+    public void setWobbleMotor(double speed, boolean ifUp, double timeoutS){
+        int newTarget;
+        if (opModeIsActive()) {
+            // Determine new target position, and pass to motor controller
+            if (ifUp){
+                newTarget = myRobot.wobbleGoalMotor.getCurrentPosition() - Constants.wobbleMotorDistance;
+            } else {
+                newTarget = myRobot.wobbleGoalMotor.getCurrentPosition() + Constants.wobbleMotorDistance;
+            }
+            myRobot.wobbleGoalMotor.setTargetPosition(newTarget);
+
+            // Turn On RUN_TO_POSITION
+            myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            myRobot.wobbleGoalMotor.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (myRobot.wobbleGoalMotor.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1",  "Running to %7d", newTarget);
+                telemetry.addData("Path2",  "Running at %7d",
+                        myRobot.wobbleGoalMotor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            myRobot.wobbleGoalMotor.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
     }
 
     @NotNull
