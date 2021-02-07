@@ -57,7 +57,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
                 .build();
         //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory pickupSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
-                .splineTo(new Vector2d(-48, 24), 72) //Drive back to pick-up second wobble goal
+                .splineTo(new Vector2d(-48, 24), 120) //Drive back to pick-up second wobble goal
                 .build();
         //Wobble pick up should be at the end of the previous or at the beginning of the next one
         Trajectory dropSecondWobble = drive.trajectoryBuilder(pickupSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
