@@ -12,13 +12,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
+import org.firstinspires.ftc.teamcode.UltimateGoal.Configuration;
 
 public class Drivetrain {
     public DcMotor lb, lf, rb, rf;
     public ExpansionHubMotor lbBR, lfBR, rbBR, rfBR;
     public ExpansionHubEx expansionHub;
     public DistanceSensor leftDistance,backDistance, frontDistance;
-    public TestBotConfiguration names = new TestBotConfiguration();
+    public Configuration names = new Configuration();
     //Software
     private Telemetry telemetry;
     // The IMU sensor object

@@ -6,6 +6,9 @@ public class Constants {
     private static double GEAR_RATIO = 16;
     private static double TICKS_PER_WHEEL_ROTATION = TICKS_PER_ROTATION*GEAR_RATIO;
     static double TICKS_PER_INCH = TICKS_PER_WHEEL_ROTATION/(4* Math.PI);
+    static int wobbleMotorDistance;
+    public static double wgsClose;
+    public static double wgsOpen;
 
     //Speeds
     static double maxSpeed = 57;
