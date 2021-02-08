@@ -45,6 +45,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         sleep(1000);
         drive.followTrajectory(toRing);
         Pose2d wobbleDropPose = getWobbleDropPose(isRed);
+        Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, -45));
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
@@ -54,9 +55,11 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
                     telemetry.update();
                 })
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
+                .splineToSplineHeading(wobbleBackPose, 0)
                 .build();
         //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory pickupSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
+                .splineTo(new Vector2d(-24, 12), 0)
                 .splineTo(new Vector2d(-48, 24), 120) //Drive back to pick-up second wobble goal
                 .build();
         //Wobble pick up should be at the end of the previous or at the beginning of the next one
@@ -85,6 +88,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         //Servo drop wobble
         drive.followTrajectory(goShoot);
         //Shoot rings
+        sleep(3000);
         drive.followTrajectory(pickup);
         //Spin motors to collect
         drive.followTrajectory(park);
