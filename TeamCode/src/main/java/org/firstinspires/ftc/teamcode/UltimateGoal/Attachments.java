@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal;
 
-import android.graphics.Bitmap;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,7 +13,7 @@ public class Attachments extends Drivetrain {
     private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
     public Configuration names = new Configuration();
-    public DcMotor collectionMotor, wobbleGoalMotor, leftFlywheelMotor, rightFlywheelMotor;
+    public DcMotor collectionMotor, wobbleGoalMotor, shooterMotor, rightFlywheelMotor;
     public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo;
 
     //Backend
@@ -27,8 +24,7 @@ public class Attachments extends Drivetrain {
         // Motors
         collectionMotor = hardwareMap.dcMotor.get(names.collectionMotor);
         wobbleGoalMotor = hardwareMap.dcMotor.get(names.wobbleGoalMotor);
-        leftFlywheelMotor = hardwareMap.dcMotor.get(names.leftShooterMotor);
-        rightFlywheelMotor = hardwareMap.dcMotor.get(names.rightShooterMotor);
+        shooterMotor = hardwareMap.dcMotor.get(names.shooterMotor);
 
         // Servos
         wobbleGoalServo = hardwareMap.servo.get(names.wobbleGoalServo);
@@ -39,11 +35,11 @@ public class Attachments extends Drivetrain {
         // Motor initalization
         collectionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFlywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFlywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFlywheelMotor.setDirection(DcMotor.Direction.REVERSE);
+        shooterMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFlywheelMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftFlywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFlywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collectionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -57,7 +53,7 @@ public class Attachments extends Drivetrain {
     }
 
     void runFlywheelMotor(double power) {
-        leftFlywheelMotor.setPower(-power);
+        shooterMotor.setPower(-power);
         rightFlywheelMotor.setPower(power);
     }
 
