@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -18,7 +20,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config
 public class DriveConstants {
     //TODO: if running testbot, change this variable to "true."
-    public static boolean testRobot = false;
+    public static boolean testRobot = true;
     /*
      * These are motor constants that should be listed online for your motors.
      */
@@ -65,8 +67,11 @@ public class DriveConstants {
         WHEEL_RADIUS = testBotConstantStorage.wheelRadius; // in
         TRACK_WIDTH = testBotConstantStorage.trackWidth; // in
         kV = testBotConstantStorage.kV;
+        Log.d("kV", String.valueOf(kV));
         kA = testBotConstantStorage.kA;
+        Log.d("kA", String.valueOf(kA));
         kStatic = testBotConstantStorage.kStatic;
+        Log.d("kStatic", String.valueOf(kStatic));
 
     }
 
