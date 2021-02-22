@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.analysis.function.Constant;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -58,7 +59,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
     // Game specific stuff (NEEDS ATTACHMENTS)
     public void grabWobble() {
-        myRobot.wobbleGoalServo.setPosition(Constants.wgsClose);
+        myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
         sleep(250);
         setWobbleMotor(0.8, false, 2);
     }
@@ -66,17 +67,17 @@ abstract public class AutonomousMethods extends LinearOpMode {
     public void dropWobble() {
         setWobbleMotor(0.8, true, 2);
         sleep(250);
-        myRobot.wobbleGoalServo.setPosition(Constants.wgsOpen);
+        myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
     }
 
-    public void setWobbleMotor(double speed, boolean ifUp, double timeoutS){
+    public void setWobbleMotor(double speed, boolean goingUp, double timeoutS){
         int newTarget;
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
-            if (ifUp){
-                newTarget = myRobot.wobbleGoalMotor.getCurrentPosition() - Constants.wobbleMotorDistance;
+            if (goingUp){
+                newTarget = Constants.wobbleTop;
             } else {
-                newTarget = myRobot.wobbleGoalMotor.getCurrentPosition() + Constants.wobbleMotorDistance;
+                newTarget = Constants.wobbleBottom;
             }
             myRobot.wobbleGoalMotor.setTargetPosition(newTarget);
 
