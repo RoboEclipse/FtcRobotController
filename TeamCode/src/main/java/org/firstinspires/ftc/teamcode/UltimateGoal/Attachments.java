@@ -13,8 +13,8 @@ public class Attachments extends Drivetrain {
     private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
     public Configuration names = new Configuration();
-    public DcMotor collectionMotor, wobbleGoalMotor, shooterMotor, rightFlywheelMotor;
-    public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo;
+    public DcMotor collectionMotor, wobbleGoalMotor, shooterMotor;
+    public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo, shooterTiltServo;
 
     //Backend
     void initialize(HardwareMap hardwareMap, Telemetry telemetry_){
@@ -31,16 +31,14 @@ public class Attachments extends Drivetrain {
         ringPushServo = hardwareMap.servo.get(names.ringPushServo);
         elevatorServo = hardwareMap.servo.get(names.elevatorServo);
         tiltServo = hardwareMap.servo.get(names.tiltServo);
+        shooterTiltServo = hardwareMap.servo.get(names.shooterTiltServo);
 
         // Motor initalization
         collectionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFlywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightFlywheelMotor.setDirection(DcMotor.Direction.FORWARD);
         shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFlywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collectionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -51,17 +49,19 @@ public class Attachments extends Drivetrain {
     void setWobbleClaw(double position) {
         wobbleGoalServo.setPosition(position);
     }
-
-    void runFlywheelMotor(double power) {
-        shooterMotor.setPower(-power);
-        rightFlywheelMotor.setPower(power);
+    void runWobbleMotor(double power) {
+        wobbleGoalMotor.setPower(power);
     }
+    void runCollector(double power) {
+        collectionMotor.setPower(power);
+    }
+    void setRingPusher(double position){ringPushServo.setPosition(position);}
+    void setElevator(double position){elevatorServo.setPosition(position);}
+    void setTilt(double position){elevatorServo.setPosition(position);}
+    void runShooter(double power) {
+        shooterMotor.setPower(-power);
+    }
+    void setShooterAngle(double position) {shooterTiltServo.setPosition(position); }
 
-    /* void runFlywheelMotor(double power) {
-        flywheelMotor.setPower(power);
-    }*/
-
-    /* void setRingPusher(double position) {
-        ringPusher.setPosition(position);
-    } */
+    double getShooterAngle() {return(shooterTiltServo.getPosition()); }
 }
