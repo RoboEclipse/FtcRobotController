@@ -10,15 +10,14 @@ public class Configuration {
     //Attachment motors
     final String collectionMotor = "collectionMotor";
     final String wobbleGoalMotor = "wobbleGoalMotor";
-    final String leftShooterMotor = "leftShooterMotor";
-    final String rightShooterMotor = "rightShooterMotor";
+    final String shooterMotor = "shooterMotor";
 
     //Tele-Op Servos
     final String wobbleGoalServo = "wobbleGoalServo";
     final String ringPushServo = "ringPushServo";
     final String elevatorServo = "elevatorServo";
     final String tiltServo = "tiltServo";
-    final String shootTiltServo = "shootTiltServo";
+    final String shooterTiltServo = "shooterTiltServo";
 
     //Distance Sensors
     final String frontDistance = "frontDistance";

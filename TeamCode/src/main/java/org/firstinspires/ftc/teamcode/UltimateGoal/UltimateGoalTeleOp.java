@@ -33,6 +33,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -43,6 +44,14 @@ public class UltimateGoalTeleOp extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private Attachments myRobot = new Attachments();
+    private double wobbleServoPosition = Constants.wobbleClose;
+    private double wobbleMotorPower = Constants.wobbleHoldingPower;
+    private double collectorPower = 0;
+    private double shooterPower = 0;
+    private double ringPushPosition = Constants.ringPushBack;
+    private double elevatorPosition = Constants.elevatorBottom;
+    private double tiltPosition = Constants.bottomTilt;
+    private double shooterAngle = Constants.setShooterAngle;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -79,9 +88,6 @@ public class UltimateGoalTeleOp extends OpMode
         double ly = gamepad1.left_stick_y;
         double speedMultiplier = 1;
         double rotationMultiplier = .8;
-        double flywheelPower = 0;
-        double ringPusherPos = 0.6;
-
         if(gamepad1.dpad_up){
             ly=-1;
             lx=0;
@@ -102,32 +108,81 @@ public class UltimateGoalTeleOp extends OpMode
             ly=0;
             speedMultiplier = 0.6;
         }
-
-
         double theta = Math.atan2(lx, ly);
         double v_theta = Math.sqrt(lx * lx + ly * ly);
         double v_rotation = gamepad1.right_stick_x;
-
         myRobot.drive(theta,  speedMultiplier*v_theta, rotationMultiplier*v_rotation);
 
-        //Set flywheel power based on press
+
+
+        //Wobble motor
+        if (gamepad1.left_trigger > 0.3) {
+            wobbleMotorPower = Constants.wobbleLowerPower;
+        } else if (gamepad1.right_trigger > 0.3) {
+            wobbleMotorPower = Constants.wobbleRaisePower;
+        } else {
+            wobbleMotorPower = Constants.wobbleHoldingPower;
+        }
+
+        //Wobble claw
         if (gamepad1.a){
-            flywheelPower = -1;
-        }
-        if (gamepad1.b) {
-            flywheelPower = 0;
+            wobbleServoPosition = Constants.wobbleOpen;
+        } else if (gamepad1.b){
+            wobbleServoPosition = Constants.wobbleClose;
         }
 
-        //Use servo to push the ring into fly wheel
-        /* if (gamepad1.x){
-            ringPusherPos = 0.4;
+        //Collection
+        if (gamepad2.left_trigger > 0.3) {
+            collectorPower = Constants.collectionPower;
+        } else if (gamepad2.right_trigger > 0.3) {
+            collectorPower = -Constants.collectionPower;
+        } else {
+            collectorPower = 0;
         }
-        if (gamepad1.y) {
-            ringPusherPos = 0.6;
-        } */
 
-        myRobot.runFlywheelMotor(flywheelPower);
-        // myRobot.setRingPusher(ringPusherPos);
+        //Ring pusher
+        if (gamepad2.left_bumper) {
+            ringPushPosition = Constants.ringPush;
+        } else if (gamepad2.left_bumper) {
+            ringPushPosition = Constants.ringPushBack;
+        }
+
+        //Elevator and tilt
+        if (gamepad2.b) {
+            elevatorPosition = Constants.elevatorBottom;
+            tiltPosition = Constants.bottomTilt;
+        } else if (gamepad2.a) {
+            elevatorPosition = Constants.elevatorTop;
+            tiltPosition = Constants.topTilt;
+        }
+
+        //Shooter
+        if (gamepad2.dpad_up) {
+            shooterPower = Constants.shooterPower;
+        } else {
+            shooterPower = 0;
+        }
+
+        //Shooter Angle
+        double shooterJoystick = gamepad2.left_stick_y;
+        if (shooterJoystick > 0.36) {
+            shooterAngle += Constants.shooterAngleIncrease;
+        } else if (shooterJoystick < -0.36) {
+            shooterAngle -= Constants.shooterAngleIncrease;
+        } else if (gamepad2.y) {
+            shooterAngle = Constants.setShooterAngle;
+        } else if (gamepad2.x) {
+            // Automation here
+        }
+
+        myRobot.runWobbleMotor(wobbleMotorPower);
+        myRobot.setWobbleClaw(wobbleServoPosition);
+        myRobot.runCollector(collectorPower);
+        myRobot.setRingPusher(ringPushPosition);
+        myRobot.setElevator(elevatorPosition);
+        myRobot.setTilt(tiltPosition);
+        myRobot.runShooter(shooterPower);
+        myRobot.setShooterAngle(shooterAngle);
 
         /*Should look like:
         2020-11-08 21:08:37.960 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
