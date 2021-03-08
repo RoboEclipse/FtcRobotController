@@ -175,6 +175,7 @@ public class UltimateGoalTeleOp extends OpMode
             // Automation here
         }
 
+
         myRobot.runWobbleMotor(wobbleMotorPower);
         myRobot.setWobbleClaw(wobbleServoPosition);
         myRobot.runCollector(collectorPower);
@@ -189,10 +190,14 @@ public class UltimateGoalTeleOp extends OpMode
         2020-11-08 21:08:37.964 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
         */
 
-
-
-
-
+        Log.d("wobbleMotorPower", String.valueOf(wobbleMotorPower));
+        Log.d("wobbleServoPosition", String.valueOf(wobbleServoPosition));
+        Log.d("collectorPower", String.valueOf(collectorPower));
+        Log.d("ringPushPosition", String.valueOf(ringPushPosition));
+        Log.d("elevatorPosition", String.valueOf(elevatorPosition));
+        Log.d("tiltPosition", String.valueOf(tiltPosition));
+        Log.d("shooterPower", String.valueOf(shooterPower));
+        Log.d("shooterAngle", String.valueOf(shooterAngle));
         Log.d("Encoders",
             myRobot.getOdometryWheels()
         );
