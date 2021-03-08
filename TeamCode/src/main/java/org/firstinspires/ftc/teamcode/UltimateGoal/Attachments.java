@@ -38,7 +38,7 @@ public class Attachments extends Drivetrain {
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
-        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         collectionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

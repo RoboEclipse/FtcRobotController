@@ -63,11 +63,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        if(testRobot){
+        /*if(testRobot){
             localizerSwitchToTestRobot();
             DriveConstants.constantsSwitchToTestRobot();
             frontEncoder.setDirection(Encoder.Direction.REVERSE);
-        }
+        }*/
 
     }
 
