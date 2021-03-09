@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.baseBot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -79,6 +80,8 @@ public class DetectionTest extends LinearOpMode {
      */
     private VuforiaLocalizer vuforia;
 
+    private FtcDashboard dashboard;
+
     /**
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
@@ -91,6 +94,8 @@ public class DetectionTest extends LinearOpMode {
         // first.
         initVuforia();
         initTfod();
+        dashboard = FtcDashboard.getInstance();
+        dashboard.startCameraStream(tfod, 0);
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -135,12 +140,14 @@ public class DetectionTest extends LinearOpMode {
                       telemetry.update();
                     }
                 }
+                //dashboard.startCameraStream(vuforia, 24);
             }
         }
 
         if (tfod != null) {
             tfod.shutdown();
         }
+        dashboard.stopCameraStream();
     }
 
     /**
