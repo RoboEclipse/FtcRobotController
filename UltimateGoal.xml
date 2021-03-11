@@ -4,7 +4,7 @@
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="wobbleGoalMotor" port="0" />
             <goBILDA5202SeriesMotor name="collectionMotor" port="1" />
-            <goBILDA5202SeriesMotor name="shooterFocus" port="3" />
+            <goBILDA5202SeriesMotor name="shooterMotor" port="3" />
             <Servo name="wobbleGoalServo" port="0" />
             <Servo name="elevatorServo" port="1" />
             <Servo name="ringPushServo" port="2" />
@@ -16,7 +16,7 @@
             <goBILDA5202SeriesMotor name="rb" port="1" />
             <goBILDA5202SeriesMotor name="lf" port="2" />
             <goBILDA5202SeriesMotor name="lb" port="3" />
-            <Servo name="shooterTilt" port="5" />
+            <Servo name="shooterTiltServo" port="5" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
