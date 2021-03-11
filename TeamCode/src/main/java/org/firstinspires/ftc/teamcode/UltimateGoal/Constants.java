@@ -41,14 +41,14 @@ public class Constants {
     static double wobbleClose = 0;
     static double wobbleOpen = 0;
 
-    static double collectionPower = 0;
+    static double collectionPower = 0.5;
 
     static double ringPush = 0.8;
     static double ringPushBack = 0.55;
 
     static double setShooterAngle = 0;
     static double shooterAngleIncrease = 0.03;
-    static double shooterPower = 0;
+    static double shooterPower = 0.5;
 
     static double elevatorTop = 0.33;
     static double elevatorBottom = 0.5;
