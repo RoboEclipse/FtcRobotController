@@ -190,6 +190,18 @@ public class UltimateGoalTeleOp extends OpMode
         2020-11-08 21:08:37.964 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
         */
 
+        telemetry.addData("wobbleMotorPower", wobbleMotorPower);
+        telemetry.addData("wobbleServoPosition", wobbleServoPosition);
+        telemetry.addData("collectorPower", collectorPower);
+        telemetry.addData("ringPushPosition", ringPushPosition);
+        telemetry.addData("elevatorPosition", elevatorPosition);
+        telemetry.addData("tiltPosition", tiltPosition);
+        telemetry.addData("shooterPower", shooterPower);
+        telemetry.addData("shooterAngle", shooterAngle);
+        telemetry.addData("Encoders",
+                myRobot.getOdometryWheels()
+        );
+
         Log.d("wobbleMotorPower", String.valueOf(wobbleMotorPower));
         Log.d("wobbleServoPosition", String.valueOf(wobbleServoPosition));
         Log.d("collectorPower", String.valueOf(collectorPower));
