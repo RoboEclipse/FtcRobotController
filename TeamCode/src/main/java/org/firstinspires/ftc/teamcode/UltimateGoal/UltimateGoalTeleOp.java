@@ -143,7 +143,7 @@ public class UltimateGoalTeleOp extends OpMode
         //Ring pusher
         if (gamepad2.left_bumper) {
             ringPushPosition = Constants.ringPush;
-        } else if (gamepad2.left_bumper) {
+        } else if (gamepad2.right_bumper) {
             ringPushPosition = Constants.ringPushBack;
         }
 
@@ -165,6 +165,8 @@ public class UltimateGoalTeleOp extends OpMode
 
         //Shooter Angle
         double shooterJoystick = gamepad2.left_stick_y;
+        shooterAngle += shooterJoystick*0.01;
+        /*
         if (shooterJoystick > 0.36) {
             shooterAngle += Constants.shooterAngleIncrease;
         } else if (shooterJoystick < -0.36) {
@@ -174,6 +176,7 @@ public class UltimateGoalTeleOp extends OpMode
         } else if (gamepad2.x) {
             // Automation here
         }
+        */
 
 
         myRobot.runWobbleMotor(wobbleMotorPower);

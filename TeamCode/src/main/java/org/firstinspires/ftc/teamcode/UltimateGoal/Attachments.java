@@ -57,7 +57,7 @@ public class Attachments extends Drivetrain {
     }
     void setRingPusher(double position){ringPushServo.setPosition(position);}
     void setElevator(double position){elevatorServo.setPosition(position);}
-    void setTilt(double position){elevatorServo.setPosition(position);}
+    void setTilt(double position){tiltServo.setPosition(position);}
     void runShooter(double power) {
         shooterMotor.setPower(-power);
     }
