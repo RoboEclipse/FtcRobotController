@@ -36,19 +36,19 @@ public class Constants {
 
     //Tele-op constants
     static double wobbleHoldingPower = 0;
-    static double wobbleRaisePower = 0;
-    static double wobbleLowerPower = 0;
-    static double wobbleClose = 0;
-    static double wobbleOpen = 0;
+    static double wobbleRaisePower = 0.5;
+    static double wobbleLowerPower = -0.5;
+    static double wobbleClose = 0.1;
+    static double wobbleOpen = 0.2;
 
-    static double collectionPower = 0.5;
+    static double collectionPower = 1;
 
     static double ringPush = 0.8;
     static double ringPushBack = 0.55;
 
     static double setShooterAngle = 0;
     static double shooterAngleIncrease = 0.03;
-    static double shooterPower = 0.5;
+    static double shooterPower = 1;
 
     static double elevatorTop = 0.33;
     static double elevatorBottom = 0.5;
