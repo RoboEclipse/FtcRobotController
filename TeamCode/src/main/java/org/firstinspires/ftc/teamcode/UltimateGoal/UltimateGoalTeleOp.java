@@ -84,8 +84,8 @@ public class UltimateGoalTeleOp extends OpMode
     @Override
     public void loop() {
         //Drive motor controls
-        double lx = -gamepad1.left_stick_x;
-        double ly = gamepad1.left_stick_y;
+        double lx = gamepad1.left_stick_x;
+        double ly = -gamepad1.left_stick_y;
         double speedMultiplier = 1;
         double rotationMultiplier = .8;
         if(gamepad1.dpad_up){
@@ -165,7 +165,13 @@ public class UltimateGoalTeleOp extends OpMode
 
         //Shooter Angle
         double shooterJoystick = gamepad2.left_stick_y;
-        shooterAngle += shooterJoystick*0.01;
+        shooterAngle += shooterJoystick*0.005;
+        if(shooterAngle>1){
+            shooterAngle = 1;
+        }
+        if(shooterAngle<0){
+            shooterAngle = 0;
+        }
         /*
         if (shooterJoystick > 0.36) {
             shooterAngle += Constants.shooterAngleIncrease;
