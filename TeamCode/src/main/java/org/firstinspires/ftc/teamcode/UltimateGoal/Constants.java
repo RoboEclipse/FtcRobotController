@@ -46,7 +46,7 @@ public class Constants {
     static double ringPush = 0.8;
     static double ringPushBack = 0.55;
 
-    static double setShooterAngle = 0;
+    static double setShooterAngle = 0.3288;
     static double shooterAngleIncrease = 0.03;
     static double shooterPower = 1;
 
