@@ -38,8 +38,8 @@ public class Constants {
     static double wobbleHoldingPower = 0;
     static double wobbleRaisePower = 0.5;
     static double wobbleLowerPower = -0.5;
-    static double wobbleClose = 0.1;
-    static double wobbleOpen = 0.2;
+    static double wobbleClose = 0.5;
+    static double wobbleOpen = 0.1;
 
     static double collectionPower = 1;
 
@@ -53,6 +53,6 @@ public class Constants {
     static double elevatorTop = 0.33;
     static double elevatorBottom = 0.5;
 
-    static double topTilt = 0.76;
+    static double topTilt = 1;
     static double bottomTilt = 0.6;
 }
