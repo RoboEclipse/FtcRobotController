@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config
 public class DriveConstants {
     //TODO: if running testbot, change this variable to "true."
-    public static boolean testRobot = true;
+    public static boolean testRobot = false;
     /*
      * These are motor constants that should be listed online for your motors.
      */
@@ -56,9 +56,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.02061;
-    public static double kA = 0.00002;
-    public static double kStatic = 0.045;
+    public static double kV = 0.01933;
+    public static double kA = 0.004;
+    public static double kStatic = 0.035;
 
 
     public static void constantsSwitchToTestRobot(){
