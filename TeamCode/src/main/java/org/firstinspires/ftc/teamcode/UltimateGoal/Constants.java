@@ -30,8 +30,8 @@ public class Constants {
 
 
     //Autonomous constants
-    static int wobbleTop = 0;
-    static int wobbleBottom = 0;
+    static int wobbleTop = 1360;
+    static int wobbleBottom = 1555;
 
 
     //Tele-op constants
@@ -46,13 +46,12 @@ public class Constants {
     static double ringPush = 0.8;
     static double ringPushBack = 0.55;
 
-    static double setShooterAngle = 0.3288;
-    static double shooterAngleIncrease = 0.03;
-    static double shooterPower = 1;
+    static double setShooterAngle = 0.500713393;
+    static double shooterPower = 0.012;
 
-    static double elevatorTop = 0.33;
+    static double elevatorTop = 0.3;
     static double elevatorBottom = 0.5;
 
-    static double topTilt = 1;
+    static double topTilt = 0.845;
     static double bottomTilt = 0.6;
 }

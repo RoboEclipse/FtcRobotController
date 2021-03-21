@@ -7,8 +7,10 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
+import org.firstinspires.ftc.teamcode.UltimateGoal.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,22 +52,31 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
                 .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
-                .addTemporalMarker(1, () -> {
-                    telemetry.addData("Test", "This should run 1 second after the robot goes to drop 1st wobble");
-                    telemetry.update();
-                })
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
+                .addTemporalMarker(3, () -> { //TODO: Might need adjustments
+                    dropWobble();
+                })
                 .splineToSplineHeading(wobbleBackPose, 0)
                 .build();
         //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory pickupSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
+                .addTemporalMarker(0, () -> {
+                    lowerWobble();
+                })
                 .splineTo(new Vector2d(-24, 12), 0)
                 .splineTo(new Vector2d(-48, 24), 120) //Drive back to pick-up second wobble goal
+                .addDisplacementMarker(() -> {
+                    grabWobble();
+                })
                 .build();
         //Wobble pick up should be at the end of the previous or at the beginning of the next one
         Trajectory dropSecondWobble = drive.trajectoryBuilder(pickupSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
                 .splineToSplineHeading(new Pose2d(-36, 54, Math.toRadians(0)), 0) //Drives to the left
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives back to correct spot for wobble drop off
+                .addTemporalMarker(3, () -> { //TODO: Might need adjustments
+                    dropWobble();
+                })
+                .splineToSplineHeading(wobbleBackPose, 0)
                 .build();
         //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
@@ -73,7 +84,13 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
                 .build();
         //Start spinning collection motors in the next trajectory
         Trajectory pickup = drive.trajectoryBuilder(goShoot.end())
+                .addTemporalMarker(0, () -> {
+                    setCollectorPower(1);
+                })
                 .splineTo(new Vector2d(-24, 36), 18)
+                .addDisplacementMarker(() -> {
+                    setCollectorPower(0);
+                })
                 .build();
 
         Trajectory park = drive.trajectoryBuilder(pickup.end())
