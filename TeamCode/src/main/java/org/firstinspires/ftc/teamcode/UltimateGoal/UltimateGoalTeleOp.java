@@ -172,9 +172,20 @@ public class UltimateGoalTeleOp extends OpMode
         //Shooter
         if (gamepad2.dpad_up) {
             shooterPower = Constants.shooterPower;
-        } else {
+        } else if (gamepad2.dpad_left) {
+            shooterPower += 0.01;
+        } else if (gamepad2.dpad_right) {
+            shooterPower -= 0.01;
+        } else if (gamepad2.dpad_down) {
             shooterPower = 0;
         }
+        if (shooterPower < 0) {
+            shooterPower = 0;
+        } else if (shooterPower > 1) {
+            shooterPower = 1;
+        }
+
+
 
         if (gamepad2.y){
             shooterAngle = Constants.setShooterAngle;

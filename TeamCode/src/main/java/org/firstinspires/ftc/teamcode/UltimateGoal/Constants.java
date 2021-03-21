@@ -46,12 +46,12 @@ public class Constants {
     static double ringPush = 0.8;
     static double ringPushBack = 0.55;
 
-    static double setShooterAngle = 0.500713393;
-    static double shooterPower = 0.012;
+    static double setShooterAngle = 0.6075030494738828; //0.500713393
+    static double shooterPower = 0.53; //0.7
 
     static double elevatorTop = 0.3;
     static double elevatorBottom = 0.5;
 
-    static double topTilt = 0.845;
+    static double topTilt = 0.84;
     static double bottomTilt = 0.6;
 }
