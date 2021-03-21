@@ -52,6 +52,7 @@ public class UltimateGoalTeleOp extends OpMode
     private double elevatorPosition = Constants.elevatorBottom;
     private double tiltPosition = Constants.bottomTilt;
     private double shooterAngle = Constants.setShooterAngle;
+    private boolean ringPushReturn = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -89,22 +90,22 @@ public class UltimateGoalTeleOp extends OpMode
         double speedMultiplier = 1;
         double rotationMultiplier = .8;
         if(gamepad1.dpad_up){
-            ly=-1;
-            lx=0;
-            speedMultiplier = 0.3;
-        }
-        else if(gamepad1.dpad_down){
             ly=1;
             lx=0;
             speedMultiplier = 0.3;
         }
+        else if(gamepad1.dpad_down){
+            ly=-1;
+            lx=0;
+            speedMultiplier = 0.3;
+        }
         if(gamepad1.dpad_left){
-            lx=1;
+            lx=-1;
             ly=0;
             speedMultiplier = 0.6;
         }
         else if(gamepad1.dpad_right){
-            lx=-1;
+            lx=1;
             ly=0;
             speedMultiplier = 0.6;
         }
@@ -125,27 +126,39 @@ public class UltimateGoalTeleOp extends OpMode
         }
 
         //Wobble claw
-        if (gamepad1.a){
+        if (gamepad1.x){
             wobbleServoPosition = Constants.wobbleOpen;
-        } else if (gamepad1.b){
+        } else if (gamepad1.y){
             wobbleServoPosition = Constants.wobbleClose;
         }
 
         //Collection
         if (gamepad2.left_trigger > 0.3) {
-            collectorPower = Constants.collectionPower;
+            if (Math.abs(elevatorPosition - Constants.elevatorTop) <= 0.05) {
+                elevatorPosition = Constants.elevatorBottom;
+                tiltPosition = Constants.bottomTilt;
+                collectorPower = 0;
+            } else {
+                collectorPower = -Constants.collectionPower;
+            }
         } else if (gamepad2.right_trigger > 0.3) {
-            collectorPower = -Constants.collectionPower;
+            collectorPower = Constants.collectionPower;
         } else {
             collectorPower = 0;
         }
 
         //Ring pusher
+        if (ringPushReturn) {
+            ringPushPosition = Constants.ringPushBack;
+            ringPushReturn = false;
+        }
         if (gamepad2.left_bumper) {
             ringPushPosition = Constants.ringPush;
+            ringPushReturn = true;
         } else if (gamepad2.right_bumper) {
             ringPushPosition = Constants.ringPushBack;
         }
+
 
         //Elevator and tilt
         if (gamepad2.b) {
@@ -163,8 +176,12 @@ public class UltimateGoalTeleOp extends OpMode
             shooterPower = 0;
         }
 
+        if (gamepad2.y){
+            shooterAngle = Constants.setShooterAngle;
+        }
+
         //Shooter Angle
-        double shooterJoystick = gamepad2.left_stick_y;
+        double shooterJoystick = -gamepad2.left_stick_y;
         shooterAngle += shooterJoystick*0.005;
         if(shooterAngle>1){
             shooterAngle = 1;
