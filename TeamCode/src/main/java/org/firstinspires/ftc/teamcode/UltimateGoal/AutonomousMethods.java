@@ -58,16 +58,25 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
 
     // Game specific stuff (NEEDS ATTACHMENTS)
+    public void setCollectorPower(int collectorPower) {
+        myRobot.collectionMotor.setPower(collectorPower);
+    }
+
     public void grabWobble() {
         myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
         sleep(250);
+        setWobbleMotor(0.8, true, 2);
+    }
+
+    public void lowerWobble() {
         setWobbleMotor(0.8, false, 2);
+        sleep(250);
+        myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
     }
 
     public void dropWobble() {
+        lowerWobble();
         setWobbleMotor(0.8, true, 2);
-        sleep(250);
-        myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
     }
 
     public void setWobbleMotor(double speed, boolean goingUp, double timeoutS){
