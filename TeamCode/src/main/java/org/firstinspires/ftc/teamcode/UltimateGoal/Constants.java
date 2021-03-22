@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class Constants {
     //TicksPerRotation is 42.78 on testbot
     private static double TICKS_PER_ROTATION = 103.6/3.7;
@@ -30,8 +33,8 @@ public class Constants {
 
 
     //Autonomous constants
-    static int wobbleTop = 1360;
-    static int wobbleBottom = 1555;
+    static int wobbleTop = 500;
+    static int wobbleBottom = 1400;
 
 
     //Tele-op constants
@@ -46,12 +49,12 @@ public class Constants {
     static double ringPush = 0.8;
     static double ringPushBack = 0.55;
 
-    static double setShooterAngle = 0.6075030494738828; //0.500713393
-    static double shooterPower = 0.53; //0.7
+    public static double setShooterAngle = 0.6075030494738828; //0.500713393
+    public static double shooterPower = 0.53; //0.7
 
     static double elevatorTop = 0.3;
     static double elevatorBottom = 0.5;
 
-    static double topTilt = 0.84;
+    static double topTilt = 0.74;
     static double bottomTilt = 0.6;
 }
