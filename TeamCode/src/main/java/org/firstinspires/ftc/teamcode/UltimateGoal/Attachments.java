@@ -49,6 +49,7 @@ public class Attachments extends Drivetrain {
     void setWobbleClaw(double position) {
         wobbleGoalServo.setPosition(position);
     }
+    double getWobbleMotorPosition() {return wobbleGoalMotor.getCurrentPosition(); }
     void runWobbleMotor(double power) {
         wobbleGoalMotor.setPower(power);
     }

@@ -21,6 +21,7 @@ import java.util.Vector;
 public class blueLeftAutonomousDetection extends AutonomousMethods {
     @Override
     public void runOpMode() {
+        initializeAutonomousAttachments(hardwareMap, telemetry);
         boolean isRed = false;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -36,6 +37,10 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         drive.setPoseEstimate(startPose);
 
         Trajectory toRing = drive.trajectoryBuilder(startPose)
+                .addTemporalMarker(0, () -> {
+                    grabWobble();
+                    setShooterAngle(Constants.setShooterAngle);
+                })
                 .splineToConstantHeading(new Vector2d(-48, 36), 0) //Goes right
                 .splineToConstantHeading(new Vector2d(-42, 36), 0) //Goes forward to detect ring
                 .build();
@@ -53,7 +58,7 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
                 .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
-                .addTemporalMarker(3, () -> { //TODO: Might need adjustments
+                .addTemporalMarker(1.5, () -> { //TODO: Might need adjustments
                     dropWobble();
                 })
                 .splineToSplineHeading(wobbleBackPose, 0)
@@ -73,14 +78,14 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         Trajectory dropSecondWobble = drive.trajectoryBuilder(pickupSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
                 .splineToSplineHeading(new Pose2d(-36, 54, Math.toRadians(0)), 0) //Drives to the left
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives back to correct spot for wobble drop off
-                .addTemporalMarker(3, () -> { //TODO: Might need adjustments
+                .addTemporalMarker(1.5, () -> { //TODO: Might need adjustments
                     dropWobble();
                 })
                 .splineToSplineHeading(wobbleBackPose, 0)
                 .build();
         //Wobble drop should be at the end of the previous or at the beginning of the next one
         Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
-                .splineToSplineHeading(new Pose2d(-9, 12, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(-12, 12, Math.toRadians(0)), 0)
                 .build();
         //Start spinning collection motors in the next trajectory
         Trajectory pickup = drive.trajectoryBuilder(goShoot.end())
@@ -105,7 +110,8 @@ public class blueLeftAutonomousDetection extends AutonomousMethods {
         //Servo drop wobble
         drive.followTrajectory(goShoot);
         //Shoot rings
-        sleep(3000);
+        shootRings(Constants.shooterPower);
+        sleep(720);
         drive.followTrajectory(pickup);
         //Spin motors to collect
         drive.followTrajectory(park);

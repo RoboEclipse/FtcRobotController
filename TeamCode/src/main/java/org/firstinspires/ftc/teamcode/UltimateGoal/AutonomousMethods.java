@@ -58,23 +58,44 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
 
     // Game specific stuff (NEEDS ATTACHMENTS)
+    public void shootRings (double shooterPower) {
+        myRobot.elevatorServo.setPosition(Constants.elevatorTop);
+        myRobot.tiltServo.setPosition(Constants.topTilt);
+        //TODO: Testing negative shooter power remove later
+        myRobot.shooterMotor.setPower(-shooterPower);
+        sleep(720);
+        for (int i = 0; i < 3; i++) {
+            myRobot.ringPushServo.setPosition(Constants.ringPush);
+            sleep(240);
+            myRobot.ringPushServo.setPosition(Constants.ringPushBack);
+            sleep(720);
+        }
+        myRobot.shooterMotor.setPower(0);
+        myRobot.elevatorServo.setPosition(Constants.elevatorBottom);
+        myRobot.tiltServo.setPosition(Constants.bottomTilt);
+    }
+
     public void setCollectorPower(int collectorPower) {
         myRobot.collectionMotor.setPower(collectorPower);
     }
 
-    public void grabWobble() {
+    public void setShooterAngle(double position) {
+        myRobot.shooterTiltServo.setPosition(position);
+    }
+
+    public void grabWobble() {  // Grabs and raises wobble arm
         myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
         sleep(250);
         setWobbleMotor(0.8, true, 2);
     }
 
-    public void lowerWobble() {
+    public void lowerWobble() { // Lowers arm and release wobble claw
         setWobbleMotor(0.8, false, 2);
         sleep(250);
         myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
     }
 
-    public void dropWobble() {
+    public void dropWobble() { //  Lowers arm, releases wobble claw, and raises wobble claw back up
         lowerWobble();
         setWobbleMotor(0.8, true, 2);
     }
