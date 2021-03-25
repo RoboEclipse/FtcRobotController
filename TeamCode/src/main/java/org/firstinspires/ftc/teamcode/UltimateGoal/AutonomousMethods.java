@@ -91,7 +91,8 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
     public void lowerWobble() { // Lowers arm and release wobble claw
         setWobbleMotor(0.8, false, 2);
-        sleep(250);
+        //TODO: Replace with external timer
+        //sleep(250);
         myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
     }
 
@@ -168,25 +169,25 @@ abstract public class AutonomousMethods extends LinearOpMode {
         int wobbleDropy = 0;
         if (!isRed) {
             if (detection.equals("Quad")) {
-                wobbleDropx = 60;
-                wobbleDropy = 60;
+                wobbleDropx = 48;
+                wobbleDropy = 48;
             } else if (detection.equals("Single")) {
-                wobbleDropx = 36;
-                wobbleDropy = 36;
+                wobbleDropx = 24;
+                wobbleDropy = 24;
             } else {
-                wobbleDropx = 12;
-                wobbleDropy = 60;
+                wobbleDropx = 0;
+                wobbleDropy = 48;
             }
         } else {
             if (detection.equals("Quad")) {
-                wobbleDropx = 60;
-                wobbleDropy = -60;
+                wobbleDropx = 48;
+                wobbleDropy = -48;
             } else if (detection.equals("Single")) {
-                wobbleDropx = 36;
-                wobbleDropy = -36;
+                wobbleDropx = 24;
+                wobbleDropy = -24;
             } else {
-                wobbleDropx = 12;
-                wobbleDropy = -60;
+                wobbleDropx = 0;
+                wobbleDropy = -48;
             }
         }
         return new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
