@@ -34,6 +34,7 @@ public class Constants {
 
     //Autonomous constants
     static int wobbleTop = 500;
+    static int wobbleHover = 1400;
     static int wobbleBottom = 1600;
 
 
@@ -41,8 +42,8 @@ public class Constants {
     static double wobbleHoldingPower = 0;
     static double wobbleRaisePower = 0.5;
     static double wobbleLowerPower = -0.5;
-    static double wobbleClose = 0.5;
-    static double wobbleOpen = 0.1;
+    public static double wobbleClose = 0.54;
+    public static double wobbleOpen = 0.1;
 
     static double collectionPower = 1;
 

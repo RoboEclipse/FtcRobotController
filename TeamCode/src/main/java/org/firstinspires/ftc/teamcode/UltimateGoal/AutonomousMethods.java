@@ -84,12 +84,17 @@ abstract public class AutonomousMethods extends LinearOpMode {
     }
 
     public void raiseWobble() {
-        setWobbleMotorPosition(0.9, true);
+        setWobbleMotorPosition(0.9, Constants.wobbleTop);
     }
 
     public void lowerWobble() {
-        setWobbleMotorPosition(0.9, false);
+        setWobbleMotorPosition(0.9, Constants.wobbleBottom);
     }
+
+    public void hoverWobble() {
+        setWobbleMotorPosition(0.9, Constants.wobbleHover);
+    }
+
 
 //    public void grabWobble() {  // Grabs and raises wobble arm
 //        myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
@@ -111,12 +116,8 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.runWobbleMotor(power);
     }
 
-    public void setWobbleMotorPosition(double speed, boolean goingUp){
-        if (goingUp) {
-            myRobot.wobbleGoalMotor.setTargetPosition(Constants.wobbleTop);
-        } else {
-            myRobot.wobbleGoalMotor.setTargetPosition(Constants.wobbleBottom);
-        }
+    public void setWobbleMotorPosition(double speed, int position){
+        myRobot.wobbleGoalMotor.setTargetPosition(position);
         myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         myRobot.wobbleGoalMotor.setPower(speed);
     }
