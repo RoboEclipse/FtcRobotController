@@ -34,7 +34,7 @@ public class Constants {
 
     //Autonomous constants
     static int wobbleTop = 500;
-    static int wobbleBottom = 1400;
+    static int wobbleBottom = 1600;
 
 
     //Tele-op constants
