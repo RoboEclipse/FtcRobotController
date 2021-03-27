@@ -236,9 +236,10 @@ public class UltimateGoalTeleOp extends OpMode
         telemetry.addData("tiltPosition", tiltPosition);
         telemetry.addData("shooterPower", shooterPower);
         telemetry.addData("shooterAngle", shooterAngle);
-        telemetry.addData("Encoders",
+        telemetry.addData("DriveEncoders",
                 myRobot.getOdometryWheels()
         );
+        telemetry.addData("ArmEncoder", myRobot.getWobbleMotorPosition());
 
         Log.d("wobbleMotorPower", String.valueOf(wobbleMotorPower));
         Log.d("wobbleServoPosition", String.valueOf(wobbleServoPosition));
@@ -251,7 +252,7 @@ public class UltimateGoalTeleOp extends OpMode
         Log.d("Encoders",
             myRobot.getOdometryWheels()
         );
-
+        Log.d("ArmEncoder", String.valueOf(myRobot.getWobbleMotorPosition()));
 
     }
 

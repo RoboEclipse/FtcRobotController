@@ -63,7 +63,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
         myRobot.shooterMotor.setPower(-shooterPower);
-        sleep(720);
+        sleep(1200);
         for (int i = 0; i < 3; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
             sleep(240);
@@ -83,22 +83,50 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.shooterTiltServo.setPosition(position);
     }
 
-    public void grabWobble() {  // Grabs and raises wobble arm
-        myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
-        sleep(250);
-        setWobbleMotor(0.8, true, 2);
+    public void raiseWobble() {
+        setWobbleMotorPosition(0.9, true);
     }
 
-    public void lowerWobble() { // Lowers arm and release wobble claw
-        setWobbleMotor(0.8, false, 2);
-        //TODO: Replace with external timer
-        //sleep(250);
-        myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
+    public void lowerWobble() {
+        setWobbleMotorPosition(0.9, false);
     }
 
-    public void dropWobble() { //  Lowers arm, releases wobble claw, and raises wobble claw back up
-        lowerWobble();
-        setWobbleMotor(0.8, true, 2);
+//    public void grabWobble() {  // Grabs and raises wobble arm
+//        myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
+//        sleep(250);
+//        setWobbleMotorPosition(0.9, true);
+//    }
+//
+//    public void lowerWobble() { // Lowers arm and release wobble claw
+//        setWobbleMotorPosition(0.9, false);
+//        myRobot.wobbleGoalServo.setPosition(Constants.wobbleOpen);
+//    }
+//
+//    public void dropWobble() { //  Lowers arm, releases wobble claw, and raises wobble claw back up
+//        lowerWobble();
+//        setWobbleMotorPosition(0.8, true);
+//    }
+
+    public void setWobbleMotorPower(double power) {
+        myRobot.runWobbleMotor(power);
+    }
+
+    public void setWobbleMotorPosition(double speed, boolean goingUp){
+        if (goingUp) {
+            myRobot.wobbleGoalMotor.setTargetPosition(Constants.wobbleTop);
+        } else {
+            myRobot.wobbleGoalMotor.setTargetPosition(Constants.wobbleBottom);
+        }
+        myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        myRobot.wobbleGoalMotor.setPower(speed);
+    }
+
+    public void setWobbleClaw(boolean wantClose){
+        if (wantClose){
+            myRobot.setWobbleClaw(Constants.wobbleClose);
+        } else {
+            myRobot.setWobbleClaw(Constants.wobbleOpen);
+        }
     }
 
     public void setWobbleMotor(double speed, boolean goingUp, double timeoutS){
@@ -158,9 +186,11 @@ abstract public class AutonomousMethods extends LinearOpMode {
             if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
                 detection = updatedRecognitions.get(0).getLabel();
                 telemetry.addData("Sample Label", detection);
+                Log.d("Sample Label", detection);
             } else {
-                detection = "none";
+                detection = "None";
                 telemetry.addData("Sample Label", "Nothing detected");
+                Log.d("Sample Label", "Nothing detected");
             }
             telemetry.update();
         }
@@ -169,25 +199,25 @@ abstract public class AutonomousMethods extends LinearOpMode {
         int wobbleDropy = 0;
         if (!isRed) {
             if (detection.equals("Quad")) {
-                wobbleDropx = 48;
-                wobbleDropy = 48;
+                wobbleDropx = 42;
+                wobbleDropy = 54;
             } else if (detection.equals("Single")) {
-                wobbleDropx = 24;
-                wobbleDropy = 24;
+                wobbleDropx = 18;
+                wobbleDropy = 30;
             } else {
-                wobbleDropx = 0;
-                wobbleDropy = 48;
+                wobbleDropx = -6;
+                wobbleDropy = 54;
             }
         } else {
             if (detection.equals("Quad")) {
-                wobbleDropx = 48;
-                wobbleDropy = -48;
+                wobbleDropx = 42;
+                wobbleDropy = -54;
             } else if (detection.equals("Single")) {
-                wobbleDropx = 24;
-                wobbleDropy = -24;
+                wobbleDropx = 18;
+                wobbleDropy = -30;
             } else {
-                wobbleDropx = 0;
-                wobbleDropy = -48;
+                wobbleDropx = -6;
+                wobbleDropy = -54;
             }
         }
         return new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
