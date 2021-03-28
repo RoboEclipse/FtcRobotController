@@ -40,6 +40,7 @@ public class Attachments extends Drivetrain {
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
         shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collectionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //HardwareMaps

@@ -63,12 +63,12 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
         myRobot.shooterMotor.setPower(-shooterPower);
-        sleep(1200);
-        for (int i = 0; i < 3; i++) {
+        sleep(3600);
+        for (int i = 0; i < 4; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
-            sleep(240);
+            sleep(360);
             myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-            sleep(720);
+            sleep(1008);
         }
         myRobot.shooterMotor.setPower(0);
         myRobot.elevatorServo.setPosition(Constants.elevatorBottom);
@@ -200,24 +200,24 @@ abstract public class AutonomousMethods extends LinearOpMode {
         int wobbleDropy = 0;
         if (!isRed) {
             if (detection.equals("Quad")) {
-                wobbleDropx = 42;
+                wobbleDropx = 36;
                 wobbleDropy = 54;
             } else if (detection.equals("Single")) {
                 wobbleDropx = 18;
                 wobbleDropy = 30;
             } else {
-                wobbleDropx = -6;
+                wobbleDropx = 0;
                 wobbleDropy = 54;
             }
         } else {
             if (detection.equals("Quad")) {
-                wobbleDropx = 42;
+                wobbleDropx = 48;
                 wobbleDropy = -54;
             } else if (detection.equals("Single")) {
-                wobbleDropx = 18;
+                wobbleDropx = 24;
                 wobbleDropy = -30;
             } else {
-                wobbleDropx = -6;
+                wobbleDropx = 0;
                 wobbleDropy = -54;
             }
         }
