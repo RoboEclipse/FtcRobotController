@@ -53,7 +53,8 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .splineToConstantHeading(new Vector2d(-48, 36), 0) //Goes right in front of the ring
                 .build();
 
-        Trajectory toSecondWobble = drive.trajectoryBuilder(new Pose2d(-12, 12, Math.toRadians(0))) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
+        Trajectory toSecondWobble = drive.trajectoryBuilder(new Pose2d(-6, 38, Math.toRadians(0))) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
+                .splineToSplineHeading(new Pose2d(12, 38, Math.toRadians(0)), 0)
                 .splineTo(new Vector2d(-48, 12), 120)
                 .build();
 
@@ -76,9 +77,9 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         sleep(500);
         Pose2d wobbleDropPose = getWobbleDropPose(isRed);
         //dashboard.stopCameraStream();
-        Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, Math.toRadians(45)));
-        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(12, 12, 0));
-        Pose2d wobbleBackPose2 = wobbleDropPose2.minus(new Pose2d(12, 0, Math.toRadians(45)));
+        Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, Math.toRadians(0)));
+        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(6, -6, 0));
+        Pose2d wobbleBackPose2 = wobbleDropPose2.minus(new Pose2d(12, 0, Math.toRadians(0)));
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
         Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
@@ -103,7 +104,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .addTemporalMarker(2.4, () -> {
                     lowerWobble();
                 })
-                .splineToSplineHeading(new Pose2d(-12, 12, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(-6, 38, Math.toRadians(0)), 0)
                 .build();
 
         //Wobble drop should be at the end of the previous or at the beginning of the next one
@@ -133,6 +134,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
 //                .build();
 
         drive.followTrajectory(dropFirstWobble);
+        sleep(360);
         shootRings(Constants.shooterPower);
         sleep(720);
 
