@@ -54,8 +54,9 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .build();
 
         Trajectory toSecondWobble = drive.trajectoryBuilder(new Pose2d(-6, 38, Math.toRadians(0))) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
-                .splineToSplineHeading(new Pose2d(12, 38, Math.toRadians(0)), 0)
-                .splineTo(new Vector2d(-48, 12), 120)
+                .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
+                .splineTo(new Vector2d(-6, 12), Math.toRadians(-180))
+                .splineTo(new Vector2d(-39, 24), Math.toRadians(120))
                 .build();
 
         //Start spinning collection motors in the next trajectory
@@ -78,7 +79,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         Pose2d wobbleDropPose = getWobbleDropPose(isRed);
         //dashboard.stopCameraStream();
         Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, Math.toRadians(0)));
-        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(6, -6, 0));
+        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(0, -1, 0));
         Pose2d wobbleBackPose2 = wobbleDropPose2.minus(new Pose2d(12, 0, Math.toRadians(0)));
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
@@ -86,6 +87,9 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
                 .addTemporalMarker(0.2, () -> { //TODO: Might need adjustments
                     hoverWobble();
+                })
+                .addTemporalMarker(1.2, () -> {
+                    prepShooter();
                 })
                 .addTemporalMarker(1.8, () -> {
                     setWobbleClaw(false);
@@ -104,7 +108,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .addTemporalMarker(2.4, () -> {
                     lowerWobble();
                 })
-                .splineToSplineHeading(new Pose2d(-6, 38, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(-6, 38, Math.toRadians(0)), 0) // Goes to shooting position
                 .build();
 
         //Wobble drop should be at the end of the previous or at the beginning of the next one
@@ -120,13 +124,14 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
 //                .build();
         //Wobble pick up should be at the end of the previous or at the beginning of the next one
         Trajectory dropSecondWobble = drive.trajectoryBuilder(toSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
-                .splineToSplineHeading(new Pose2d(-36, 54, Math.toRadians(0)), 0) //Drives to the left
-                .splineToSplineHeading(wobbleDropPose2, 0) //Drives back to correct spot for wobble drop off
-                .addTemporalMarker(1.5, () -> { //TODO: Might need adjustments
-                    //dropWobble();
-                })
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90)) // Drives around rings
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                //TODO: Make proper vector
+                .splineTo(new Vector2d(wobbleDropPose2.getX(), wobbleDropPose2.getY()), 0) //Drives back to correct spot for wobble drop off
+                .build();
+        Trajectory park = drive.trajectoryBuilder(dropSecondWobble.end())
                 .splineToSplineHeading(wobbleBackPose2, 0)
-                .splineTo(new Vector2d(12, 36), 0)
+                .splineTo(new Vector2d(12, 24), 0)
                 .build();
         //Wobble drop should be at the end of the previous or at the beginning of the next one
 //        Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
@@ -140,12 +145,18 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
 
         drive.followTrajectory(toSecondWobble);
         setWobbleClaw(true);
-        sleep(240);
+        sleep(480);
         raiseWobble();
         //Servo drop wobble
         //drive.followTrajectory(pickupSecondWobble);
         //Servo grab wobble
         drive.followTrajectory(dropSecondWobble);
+        hoverWobble();
+        sleep(720);
+        setWobbleClaw(false);
+        sleep(200);
+        raiseWobble();
+        drive.followTrajectory(park);
         if (tfod != null) {
             tfod.shutdown();
         }
