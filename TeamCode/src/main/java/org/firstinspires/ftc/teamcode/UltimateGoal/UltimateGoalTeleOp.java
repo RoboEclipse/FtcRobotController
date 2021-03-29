@@ -167,6 +167,7 @@ public class UltimateGoalTeleOp extends OpMode
         } else if (gamepad2.a) {
             elevatorPosition = Constants.elevatorTop;
             tiltPosition = Constants.topTilt;
+            shooterPower = Constants.shooterPower;
         }
 
         //Shooter
