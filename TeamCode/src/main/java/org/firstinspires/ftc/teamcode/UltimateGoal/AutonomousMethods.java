@@ -178,7 +178,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
     }
 
     @NotNull
-    public Pose2d getWobbleDropPose(boolean isRed) {
+    public String getWobbleDropPose() {
         //Detection happens here
         String detection = "";
         if (tfod != null) {
@@ -197,35 +197,21 @@ abstract public class AutonomousMethods extends LinearOpMode {
             }
             telemetry.update();
         }
-
-        int wobbleDropx = 0;
-        int wobbleDropy = 0;
-        if (!isRed) {
-            if (detection.equals("Quad")) {
-                wobbleDropx = 36;
-                wobbleDropy = 54;
-            } else if (detection.equals("Single")) {
-                wobbleDropx = 18;
-                wobbleDropy = 30;
-            } else {
-                wobbleDropx = 0;
-                wobbleDropy = 54;
-            }
-        } else {
-            if (detection.equals("Quad")) {
-                wobbleDropx = 48;
-                wobbleDropy = -54;
-            } else if (detection.equals("Single")) {
-                wobbleDropx = 24;
-                wobbleDropy = -30;
-            } else {
-                wobbleDropx = 0;
-                wobbleDropy = -54;
-            }
-        }
-        return new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
+        return detection;
     }
 
+//    else {
+//        if (detection.equals("Quad")) {
+//            wobbleDropx = 42;
+//            wobbleDropy = -54;
+//        } else if (detection.equals("Single")) {
+//            wobbleDropx = 21;
+//            wobbleDropy = -30;
+//        } else {
+//            wobbleDropx = 0;
+//            wobbleDropy = -54;
+//        }
+//    }
 
 
     // Drive stuff
