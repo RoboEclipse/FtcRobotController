@@ -92,7 +92,7 @@ public class newRouteTest extends AutonomousMethods {
                 .strafeTo(firstDropPosition) //Go to firstDropPosition
                 .build();
         Trajectory getSecondWobbleClose = drive.trajectoryBuilder(new Pose2d(firstDropPosition,0), 0)
-                .strafeTo(shootVector)
+                .splineToConstantHeading(shootVector,0)
                 .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
                 .splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
                 .splineTo(secondGrabPosition, Math.toRadians(120))
@@ -114,7 +114,7 @@ public class newRouteTest extends AutonomousMethods {
                 .strafeTo(firstDropPosition) //Go to firstDropPosition
                 .build();
         Trajectory getSecondWobbleClose = drive.trajectoryBuilder(new Pose2d(firstDropPosition,0), 0)
-                .strafeTo(shootVector)
+                .splineToConstantHeading(shootVector,0)
                 .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
                 .splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
                 .splineTo(secondGrabPosition, Math.toRadians(120))
@@ -126,6 +126,7 @@ public class newRouteTest extends AutonomousMethods {
                 .strafeTo(parkPosition)
                 .build();
     }
+
     public void generateFarRoute(SampleMecanumDrive drive, Vector2d shootVector, Vector2d secondGrabPosition, Vector2d parkPosition){
         Vector2d firstDropPosition = new Vector2d(0,54);
         Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(6,-6));
@@ -134,7 +135,7 @@ public class newRouteTest extends AutonomousMethods {
                 .strafeTo(firstDropPosition) //Go to firstDropPosition
                 .build();
         Trajectory getSecondWobbleClose = drive.trajectoryBuilder(new Pose2d(firstDropPosition,0), 0)
-                .strafeTo(shootVector)
+                .splineToConstantHeading(shootVector,0)
                 .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
                 .splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
                 .splineTo(secondGrabPosition, Math.toRadians(120))
