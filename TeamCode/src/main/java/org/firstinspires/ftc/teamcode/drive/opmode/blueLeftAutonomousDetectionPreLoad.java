@@ -21,7 +21,8 @@ import java.util.Vector;
 @Autonomous(group = "drive")
 public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
     private FtcDashboard dashboard;
-    String detected = "";
+    String detection;
+    double dropDelay;
 
     @Override
     public void runOpMode() {
@@ -76,10 +77,27 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         //Servo grab wobble
         drive.followTrajectory(toRing);
         sleep(500);
-        Pose2d wobbleDropPose = getWobbleDropPose(isRed);
+        detection = getWobbleDropPose();
+        int wobbleDropx;
+        int wobbleDropy;
+        if (detection.equals("Quad")) {
+            wobbleDropx = 48;
+            wobbleDropy = 54;
+            dropDelay = 3.6;
+        } else if (detection.equals("Single")) {
+            wobbleDropx = 24;
+            wobbleDropy = 31;
+            dropDelay = 2.7;
+        } else {
+            wobbleDropx = 0;
+            wobbleDropy = 54;
+            dropDelay = 1.8;
+        }
+        Pose2d wobbleDropPose = new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
+
         //dashboard.stopCameraStream();
         Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, Math.toRadians(0)));
-        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(0, -1, 0));
+        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(0, -3, 0));
         Pose2d wobbleBackPose2 = wobbleDropPose2.minus(new Pose2d(12, 0, Math.toRadians(0)));
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
@@ -91,10 +109,10 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .addTemporalMarker(1.2, () -> {
                     prepShooter();
                 })
-                .addTemporalMarker(1.8, () -> {
+                .addTemporalMarker(dropDelay, () -> {
                     setWobbleClaw(false);
                 })
-                .addTemporalMarker(2, () -> {
+                .addTemporalMarker(dropDelay + 0.2, () -> {
                     raiseWobble();
                 })
                 .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
@@ -154,7 +172,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         hoverWobble();
         sleep(720);
         setWobbleClaw(false);
-        sleep(200);
+        sleep(300);
         raiseWobble();
         drive.followTrajectory(park);
         if (tfod != null) {
@@ -168,3 +186,5 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         //Spin motors to collect
     }
 }
+
+
