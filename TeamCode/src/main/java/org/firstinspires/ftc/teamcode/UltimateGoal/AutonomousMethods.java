@@ -3,33 +3,25 @@ package org.firstinspires.ftc.teamcode.UltimateGoal;
 
 import android.util.Log;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.analysis.function.Constant;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.baseBot.Drivetrain;
+import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEAutonomousConstants;
 import org.jetbrains.annotations.NotNull;
-import org.openftc.revextensions2.RevBulkData;
 
 import java.util.List;
 
@@ -58,12 +50,12 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
 
     // Game specific stuff (NEEDS ATTACHMENTS)
-    public void shootRings (double shooterPower) {
+    public void shootRings() {
         for (int i = 0; i < 4; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
-            sleep(360);
+            sleep(240);
             myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-            sleep(1008);
+            sleep(720);
         }
         myRobot.shooterMotor.setPower(0);
         myRobot.elevatorServo.setPosition(Constants.elevatorBottom);
@@ -74,7 +66,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.elevatorServo.setPosition(Constants.elevatorTop);
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
-        myRobot.shooterMotor.setPower(-Constants.shooterPower);
+        myRobot.shooterMotor.setPower(-Constants.shooterPower + 0.0145);
     }
 
     public void setCollectorPower(int collectorPower) {
@@ -373,5 +365,75 @@ abstract public class AutonomousMethods extends LinearOpMode {
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
+    //Positive = Clockwise, Negative = Counterclockwise
+    public void encoderTurn(double targetAngle, double power, double tolerance){
+        encoderTurnNoStop(targetAngle, power, tolerance);
+        runMotors(0,0);
+        setModeAllDrive(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    void encoderTurnNoStop(double targetAngle, double power, double tolerance) {
+        encoderTurnNoStopPowers(targetAngle, -power, power, tolerance, true);
+    }
+
+    void encoderTurnNoStopPowers(double targetAngle, double leftPower, double rightPower, double tolerance, boolean usePID) {
+        double kR = SKYSTONEAutonomousConstants.kR;
+        double kD = SKYSTONEAutonomousConstants.kD;
+
+        //Undefined constants
+        double d;
+        double dt;
+        double leftProportionalPower;
+        double rightProportionalPower;
+        //Initial error
+        double currentAngle = getHorizontalAngle();
+        double error = targetAngle-currentAngle;
+        error = loopAround(error);
+        double previousError = error;
+        //Initial Time
+        ElapsedTime clock = new ElapsedTime();
+        double t1 = clock.nanoseconds();
+        double t2 = t1;
+        setModeAllDrive(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        while(Math.abs(error)>tolerance && opModeIsActive()){
+
+            //Getting Error
+            currentAngle = getHorizontalAngle();
+            error = loopAround(targetAngle-currentAngle);
+            if(usePID){
+                //Getting time difference
+                t2 = clock.nanoseconds();
+                dt = t2-t1;
+
+                //Setting d action
+                d = (error-previousError)/dt*Math.pow(10,9);
+                //Setting p action
+                leftProportionalPower = Math.max(Math.min(error*kR + d*kD, 1),-1)*leftPower;
+                rightProportionalPower = Math.max(Math.min(error*kR + d*kD, 1),-1)*rightPower;
+                Log.d("Skystone: ", "leftProportionalPower: " + leftProportionalPower + " rightProportionalPower: " + rightProportionalPower);
+                Log.d("Skystone: ", "dt: " + dt + "DerivativeAction: " + d*kD);
+            }
+            else{
+                leftProportionalPower = leftPower*Math.signum(error);
+                rightProportionalPower = rightPower*Math.signum(error);
+            }
+
+            //Set real power
+            double realLeftPower = Math.max(Math.abs(leftPower/2), Math.abs(leftProportionalPower))*Math.signum(leftProportionalPower);
+            double realRightPower = Math.max(Math.abs(rightPower/2), Math.abs(rightProportionalPower))*Math.signum(rightProportionalPower);
+            runMotors(realLeftPower, realRightPower);
+
+            //Store old values
+            previousError = error;
+            if(usePID){
+                t1 = t2;
+            }
+
+
+            //Logging
+            Log.d("Skystone: ", "encoderTurn Error: " + error + " leftPower: " + realLeftPower + "rightPower: " + realRightPower + "CurrentAngle: " + currentAngle);
+        }
     }
 }
