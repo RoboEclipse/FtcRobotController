@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.UltimateGoal;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.baseBot.Drivetrain;
 
 public class Attachments extends Drivetrain {
@@ -15,6 +17,7 @@ public class Attachments extends Drivetrain {
     public Configuration names = new Configuration();
     public DcMotor collectionMotor, wobbleGoalMotor, shooterMotor;
     public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo, shooterTiltServo;
+    public DistanceSensor clawDistance, frontDistance, leftDistance;
 
     //Backend
     void initialize(HardwareMap hardwareMap, Telemetry telemetry_){
@@ -32,6 +35,11 @@ public class Attachments extends Drivetrain {
         elevatorServo = hardwareMap.servo.get(names.elevatorServo);
         tiltServo = hardwareMap.servo.get(names.tiltServo);
         shooterTiltServo = hardwareMap.servo.get(names.shooterTiltServo);
+
+        //Sensors
+        clawDistance = hardwareMap.get(DistanceSensor.class, names.clawDistance);
+        frontDistance = hardwareMap.get(DistanceSensor.class, names.frontDistance);
+        leftDistance = hardwareMap.get(DistanceSensor.class, names.leftDistance);
 
         // Motor initalization
         collectionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,6 +72,12 @@ public class Attachments extends Drivetrain {
         shooterMotor.setPower(-power);
     }
     void setShooterAngle(double position) {shooterTiltServo.setPosition(position); }
+    double getFrontDistance(){
+        return frontDistance.getDistance(DistanceUnit.INCH);
+    }
+    double getLeftDistance(){
+        return leftDistance.getDistance(DistanceUnit.INCH);
+    }
 
     double getShooterAngle() {return(shooterTiltServo.getPosition()); }
 }
