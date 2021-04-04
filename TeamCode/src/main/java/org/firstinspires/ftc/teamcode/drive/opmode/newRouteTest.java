@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.UltimateGoal.AutoTransitioner;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.UltimateGoal.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -27,7 +28,7 @@ public class newRouteTest extends AutonomousMethods {
         boolean isRed = false;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        setWobbleClaw(true);
 
         initVuforia();
         initTfod();
@@ -46,11 +47,11 @@ public class newRouteTest extends AutonomousMethods {
         Pose2d startPose = new Pose2d(-63, 48, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
         Vector2d firstDropPositionClose = new Vector2d(2,49);
-        Vector2d firstDropPositionMid = new Vector2d(26,30);
+        Vector2d firstDropPositionMid = new Vector2d(27,27);
         Vector2d firstDropPositionFar = new Vector2d(52,48);
         Vector2d ringVector = new Vector2d(-54, 39);
         Vector2d shootVector = new Vector2d(-6, 38);
-        Vector2d secondGrabPositionClose = new Vector2d(-36, 21.5);
+        Vector2d secondGrabPositionClose = new Vector2d(-36, 17.5);
         Vector2d secondGrabPositionMid = new Vector2d(-36, 20.5);
         Vector2d secondGrabPositionFar = new Vector2d(-38, 29);
 
@@ -110,7 +111,9 @@ public class newRouteTest extends AutonomousMethods {
         drive.followTrajectory(driveTrajectories[0]);
         //Drop first goal
         setWobbleClaw(false);
-        sleep(200);
+        sleep(360);
+        raiseWobble();
+        sleep(500);
         //Drive to second goal pickup location
         drive.followTrajectory(driveTrajectories[1]);
         //Pick up second goal
@@ -127,12 +130,13 @@ public class newRouteTest extends AutonomousMethods {
         sleep(500);
         //Park
         drive.followTrajectory(driveTrajectories[3]);
+        AutoTransitioner.transitionOnStop(this, "UltimateGoalTeleOp");
     }
 
     private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition){
         Trajectory[] output = new Trajectory[4];
         Vector2d shootVector = new Vector2d(-6, 34);
-        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-6,6));
+        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-4,6));
 
         Vector2d parkPosition = new Vector2d(11.5, 22);
 
@@ -140,12 +144,12 @@ public class newRouteTest extends AutonomousMethods {
                 .strafeTo(firstDropPosition) //Go to firstDropPosition
                 .build();
         Trajectory getSecondWobble = drive.trajectoryBuilder(new Pose2d(firstDropPosition,0), 0)
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(1.6, () -> {
                     lowerWobble();
                 })
-                .back(5)
+                .back(10)
                 .splineToConstantHeading(new Vector2d(8, 38), 0)
-                .splineToConstantHeading(new Vector2d(-6, 38), 0)
+                //.splineToConstantHeading(new Vector2d(-6, 38), 0)
                 .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
                 .splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
                 .splineTo(secondGrabPosition, Math.toRadians(120))
