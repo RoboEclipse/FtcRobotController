@@ -6,17 +6,11 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.UltimateGoal.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Vector;
 @Config
 @Autonomous(group = "drive")
 public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
@@ -81,15 +75,15 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         int wobbleDropx;
         int wobbleDropy;
         if (detection.equals("Quad")) {
-            wobbleDropx = 48;
-            wobbleDropy = 54;
-            dropDelay = 3.6;
+            wobbleDropx = 44;
+            wobbleDropy = 46;
+            dropDelay = 2.8;
         } else if (detection.equals("Single")) {
-            wobbleDropx = 24;
+            wobbleDropx = 22;
             wobbleDropy = 31;
             dropDelay = 2.7;
         } else {
-            wobbleDropx = 0;
+            wobbleDropx = -2;
             wobbleDropy = 54;
             dropDelay = 1.8;
         }
@@ -97,7 +91,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
 
         //dashboard.stopCameraStream();
         Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, Math.toRadians(0)));
-        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(0, -3, 0));
+        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(0, 6, 0));
         Pose2d wobbleBackPose2 = wobbleDropPose2.minus(new Pose2d(12, 0, Math.toRadians(0)));
 
         //Trajectories are defined here so that wobbleDropx/y is actually correct
@@ -123,10 +117,10 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
 //                    setWobbleMotorPower(0);
 //                })
                 .splineToSplineHeading(wobbleBackPose, 0)
-                .addTemporalMarker(2.4, () -> {
+                .addTemporalMarker(dropDelay + 0.6, () -> {
                     lowerWobble();
                 })
-                .splineToSplineHeading(new Pose2d(-6, 38, Math.toRadians(0)), 0) // Goes to shooting position
+                .splineToSplineHeading(new Pose2d(-6, 26, Math.toRadians(0)), 0) // Goes to shooting position
                 .build();
 
         //Wobble drop should be at the end of the previous or at the beginning of the next one
@@ -158,7 +152,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
 
         drive.followTrajectory(dropFirstWobble);
         sleep(360);
-        shootRings(Constants.shooterPower);
+        shootRings();
         sleep(720);
 
         drive.followTrajectory(toSecondWobble);
