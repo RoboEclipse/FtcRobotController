@@ -57,6 +57,6 @@ public class Constants {
     static double elevatorTop = 0.3;
     static double elevatorBottom = 0.5;
 
-    static double topTilt = 0.74;
-    static double bottomTilt = 0.6;
+    public static double topTilt = 0.73;
+    public static double bottomTilt = 0.6;
 }
