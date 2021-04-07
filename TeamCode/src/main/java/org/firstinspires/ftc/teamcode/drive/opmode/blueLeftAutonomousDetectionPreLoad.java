@@ -45,13 +45,13 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         //Create Vectors and Poses
         Pose2d startPose = new Pose2d(-63, 48, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
-        Vector2d firstDropPositionClose = new Vector2d(3,51);
+        Vector2d firstDropPositionClose = new Vector2d(5,51);
         Vector2d firstDropPositionMid = new Vector2d(27,27);
         Vector2d firstDropPositionFar = new Vector2d(52,48);
         Vector2d ringVector = new Vector2d(-50, 39);
         Vector2d shootVector = new Vector2d(-5, 38);
-        Vector2d secondGrabPositionClose = new Vector2d(-36, 18.5);
-        Vector2d secondGrabPositionMid = new Vector2d(-34, 19.75);
+        Vector2d secondGrabPositionClose = new Vector2d(-36, 20);
+        Vector2d secondGrabPositionMid = new Vector2d(-33.75, 17);
         Vector2d secondGrabPositionFar = new Vector2d(-37, 28);
 
         //Generate constant trajectories
@@ -67,7 +67,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
                 .addTemporalMarker(0, () -> {
                     hoverWobble();
                 })
-                .addTemporalMarker(0.2, () -> {
+                .addTemporalMarker(0.1, () -> {
                     prepShooter();
                 })
                 .splineToConstantHeading(new Vector2d(-30, 60), 0)
@@ -88,7 +88,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         //Drive to ring
         drive.followTrajectory(toRing);
         //getWobbleDropPose
-        sleep(720);
+        sleep(1200);
         detection = getWobbleDropPose();
         //Set trajectories based on ring detection
         if (detection.equals("Quad")) {
@@ -99,14 +99,13 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
             driveTrajectories = closeTrajectories;
         }
         //Go to shoot location and power up shooter motor
-        sleep(360);
         drive.followTrajectory(toShoot);
         //Correct imu
         //TODO: Replace with refreshPose
         encoderTurn(0,1,3);
         drive.setPoseEstimate(new Pose2d(shootVector, 0));
         //Shoot
-        sleep(240);
+        sleep(1008);
         shootRings();
         //Drive to first goal drop position
         drive.followTrajectory(driveTrajectories[0]);
@@ -138,7 +137,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
     private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition){
         Trajectory[] output = new Trajectory[4];
         Vector2d shootVector = new Vector2d(-6, 34);
-        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-3,6));
+        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-3,3));
 
         Vector2d parkPosition = new Vector2d(11.5, 22);
 

@@ -18,6 +18,7 @@ public class Configuration {
     final String elevatorServo = "elevatorServo";
     final String tiltServo = "tiltServo";
     final String shooterTiltServo = "shooterTiltServo";
+    final String sideArmServo = "sideArmServo";
 
     //Distance Sensors
     final String frontDistance = "frontDistance";
