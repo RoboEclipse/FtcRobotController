@@ -44,6 +44,10 @@ public class Constants {
     static double wobbleLowerPower = -0.5;
     public static double wobbleClose = 0.50;
     public static double wobbleOpen = 0.1;
+    public static double sideArmOut = 0.43;
+    public static double sideArmIn = 0.1;
+    public static double sideArmStraight = 0.63;
+
 
     static double collectionPower = 1;
 
@@ -54,9 +58,9 @@ public class Constants {
     public static double shooterPower = 0.53; //0.7
     public static double autoShooterPower = 0.54;
 
-    static double elevatorTop = 0.3;
-    static double elevatorBottom = 0.5;
+    public static double elevatorTop = 0.3;
+    public static double elevatorBottom = 0.5;
 
-    public static double topTilt = 0.73;
+    public static double topTilt = 0.74;
     public static double bottomTilt = 0.6;
 }
