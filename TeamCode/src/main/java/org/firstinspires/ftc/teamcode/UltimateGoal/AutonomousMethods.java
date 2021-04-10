@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -93,6 +94,19 @@ abstract public class AutonomousMethods extends LinearOpMode {
         setWobbleMotorPosition(0.9, Constants.wobbleHover);
     }
 
+    public Pose2d refreshPose(Pose2d currentPose){
+        double x = currentPose.getX();
+        double y = currentPose.getY();
+        double heading = myRobot.getAngle();
+        if(myRobot.getAngle()>-5 && myRobot.getAngle()<5){
+            x = 72-9-myRobot.getFrontDistance();
+            y = 72-9-myRobot.getLeftDistance();
+        }
+        if(myRobot.getAngle()<-175 || myRobot.getAngle()>175){
+            x = -72+9+myRobot.getFrontDistance();
+        }
+        return new Pose2d(x, y, heading);
+    }
 
 //    public void grabWobble() {  // Grabs and raises wobble arm
 //        myRobot.wobbleGoalServo.setPosition(Constants.wobbleClose);
