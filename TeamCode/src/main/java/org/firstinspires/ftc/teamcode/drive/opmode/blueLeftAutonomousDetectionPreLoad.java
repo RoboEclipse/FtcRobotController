@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.UltimateGoal.AutoTransitioner;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.UltimateGoal.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -15,16 +17,20 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @Autonomous(group = "drive")
 public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
     private FtcDashboard dashboard;
-    String detection;
-    double dropDelay;
+
+    // String for holding detection
+    String detection = "";
 
     @Override
     public void runOpMode() {
         initializeAutonomousAttachments(hardwareMap, telemetry);
+        telemetry.addData("Initialization: ", "In Progress");
+        telemetry.update();
+
         boolean isRed = false;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        setWobbleClaw(true);
 
         initVuforia();
         initTfod();
@@ -36,149 +42,132 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
             tfod.activate();
         }
 
+        //Create Vectors and Poses
         Pose2d startPose = new Pose2d(-63, 48, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
+        Vector2d firstDropPositionClose = new Vector2d(5,51);
+        Vector2d firstDropPositionMid = new Vector2d(27,27);
+        Vector2d firstDropPositionFar = new Vector2d(52,48);
+        Vector2d ringVector = new Vector2d(-50, 39);
+        Vector2d shootVector = new Vector2d(-5, 38);
+        Vector2d secondGrabPositionClose = new Vector2d(-36, 20);
+        Vector2d secondGrabPositionMid = new Vector2d(-33.75, 17);
+        Vector2d secondGrabPositionFar = new Vector2d(-37, 28);
 
+        //Generate constant trajectories
         Trajectory toRing = drive.trajectoryBuilder(startPose)
                 .addTemporalMarker(0, () -> {
                     raiseWobble();
                     setWobbleClaw(true);
                     setShooterAngle(Constants.setShooterAngle);
                 })
-                .splineToConstantHeading(new Vector2d(-48, 36), 0) //Goes right in front of the ring
+                .splineToConstantHeading(ringVector, 0) //Goes right in front of the ring
                 .build();
-
-        Trajectory toSecondWobble = drive.trajectoryBuilder(new Pose2d(-6, 38, Math.toRadians(0))) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
-                .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
-                .splineTo(new Vector2d(-6, 12), Math.toRadians(-180))
-                .splineTo(new Vector2d(-39, 24), Math.toRadians(120))
+        Trajectory toShoot = drive.trajectoryBuilder(new Pose2d(ringVector, 0), 0)
+                .addTemporalMarker(0, () -> {
+                    hoverWobble();
+                })
+                .addTemporalMarker(0.1, () -> {
+                    prepShooter();
+                })
+                .splineToConstantHeading(new Vector2d(-30, 60), 0)
+                .splineToConstantHeading(new Vector2d(-12, 60), 0)
+                .splineToConstantHeading(shootVector, 0) // Goes to shooting position
                 .build();
+        //Generate variable trajectory sets
+        Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose, secondGrabPositionClose);
+        Trajectory[] midTrajectories = generateRoute(drive, firstDropPositionMid, secondGrabPositionMid);
+        Trajectory[] farTrajectories = generateRoute(drive, firstDropPositionFar, secondGrabPositionFar);
+        Trajectory[] driveTrajectories;
 
-        //Start spinning collection motors in the next trajectory
-//        Trajectory pickup = drive.trajectoryBuilder(new Pose2d(-12, 12, Math.toRadians(0)))
-//                .addTemporalMarker(0, () -> {
-//                    setCollectorPower(1);
-//                })
-//                .splineTo(new Vector2d(-24, 36), 18)
-//                .addDisplacementMarker(() -> {
-//                    setCollectorPower(0);
-//                })
-//                .build();
+        telemetry.addData("Initialization: ", "Finished");
+        telemetry.update();
 
         waitForStart();
 
-        if(isStopRequested()) return;
-        //Servo grab wobble
+        //Drive to ring
         drive.followTrajectory(toRing);
-        sleep(500);
+        //getWobbleDropPose
+        sleep(1200);
         detection = getWobbleDropPose();
-        int wobbleDropx;
-        int wobbleDropy;
+        //Set trajectories based on ring detection
         if (detection.equals("Quad")) {
-            wobbleDropx = 44;
-            wobbleDropy = 46;
-            dropDelay = 2.8;
+            driveTrajectories = farTrajectories;
         } else if (detection.equals("Single")) {
-            wobbleDropx = 22;
-            wobbleDropy = 31;
-            dropDelay = 2.7;
+            driveTrajectories = midTrajectories;
         } else {
-            wobbleDropx = -2;
-            wobbleDropy = 54;
-            dropDelay = 1.8;
+            driveTrajectories = closeTrajectories;
         }
-        Pose2d wobbleDropPose = new Pose2d(wobbleDropx, wobbleDropy, Math.toRadians(0));
+        //Go to shoot location and power up shooter motor
+        drive.followTrajectory(toShoot);
+        //Correct imu
+        //TODO: Replace with refreshPose
+        encoderTurn(0,1,3);
+        drive.setPoseEstimate(new Pose2d(shootVector, 0));
+        //Shoot
+        sleep(1008);
+        shootRings();
+        //Drive to first goal drop position
+        drive.followTrajectory(driveTrajectories[0]);
+        //Drop first goal
+        setWobbleClaw(false);
+        sleep(360);
+        raiseWobble();
+        sleep(500);
+        //Drive to second goal pickup location
+        //TODO: Split trajectory, add a refreshPose right before grabbing
+        drive.followTrajectory(driveTrajectories[1]);
+        //Pick up second goal
+        sleep(500);
+        setWobbleClaw(true);
+        sleep(500);
+        hoverWobble();
+        //Drive to second goal drop position
+        drive.followTrajectory(driveTrajectories[2]);
+        //Drop second goal
+        setWobbleClaw(false);
+        sleep(200);
+        raiseWobble();
+        sleep(500);
+        //Park
+        drive.followTrajectory(driveTrajectories[3]);
+        AutoTransitioner.transitionOnStop(this, "TeleOp");
+    }
 
-        //dashboard.stopCameraStream();
-        Pose2d wobbleBackPose = wobbleDropPose.minus(new Pose2d(12, 0, Math.toRadians(0)));
-        Pose2d wobbleDropPose2 = wobbleDropPose.minus(new Pose2d(0, 6, 0));
-        Pose2d wobbleBackPose2 = wobbleDropPose2.minus(new Pose2d(12, 0, Math.toRadians(0)));
+    private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition){
+        Trajectory[] output = new Trajectory[4];
+        Vector2d shootVector = new Vector2d(-6, 34);
+        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-3,3));
 
-        //Trajectories are defined here so that wobbleDropx/y is actually correct
-        Trajectory dropFirstWobble = drive.trajectoryBuilder(toRing.end())
-                .splineToConstantHeading(new Vector2d(-36, 54), 0) //Goes left to avoid rings
-                .addTemporalMarker(0.2, () -> { //TODO: Might need adjustments
-                    hoverWobble();
-                })
-                .addTemporalMarker(1.2, () -> {
-                    prepShooter();
-                })
-                .addTemporalMarker(dropDelay, () -> {
-                    setWobbleClaw(false);
-                })
-                .addTemporalMarker(dropDelay + 0.2, () -> {
-                    raiseWobble();
-                })
-                .splineToSplineHeading(wobbleDropPose, 0) //Drives to correct spot for wobble drop off
-//                .addTemporalMarker(1.2, () -> {
-//                    setWobbleMotorPower(0.75);
-//                })
-//                .addTemporalMarker(2.2, () -> {
-//                    setWobbleMotorPower(0);
-//                })
-                .splineToSplineHeading(wobbleBackPose, 0)
-                .addTemporalMarker(dropDelay + 0.6, () -> {
+        Vector2d parkPosition = new Vector2d(11.5, 22);
+
+        Trajectory dropFirstWobble = drive.trajectoryBuilder(new Pose2d(shootVector, 0), 0) //Start at shoot position
+                .strafeTo(firstDropPosition) //Go to firstDropPosition
+                .build();
+        Trajectory getSecondWobble = drive.trajectoryBuilder(new Pose2d(firstDropPosition,0), 0)
+                .addTemporalMarker(1.6, () -> {
                     lowerWobble();
                 })
-                .splineToSplineHeading(new Pose2d(-6, 26, Math.toRadians(0)), 0) // Goes to shooting position
+                .back(10)
+                .splineToConstantHeading(new Vector2d(0, 38), 0)
+                //.splineToConstantHeading(new Vector2d(-6, 38), 0)
+                .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
+                .splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
+                .splineTo(secondGrabPosition, Math.toRadians(120))
                 .build();
-
-        //Wobble drop should be at the end of the previous or at the beginning of the next one
-//        Trajectory pickupSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
-//                .addTemporalMarker(0, () -> {
-//                    //lowerWobble();
-//                })
-//                .splineTo(new Vector2d(-24, 12), 0)
-//                 //Drive back to pick-up second wobble goal
-//                .addDisplacementMarker(() -> {
-//                    //grabWobble();
-//                })
-//                .build();
-        //Wobble pick up should be at the end of the previous or at the beginning of the next one
-        Trajectory dropSecondWobble = drive.trajectoryBuilder(toSecondWobble.end()) //Maybe merge with dropFirst Wobble because we just need the same start location and it will work
-                .splineTo(new Vector2d(-48, 42), Math.toRadians(90)) // Drives around rings
+        Trajectory dropSecondWobble = drive.trajectoryBuilder(getSecondWobble.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
                 .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
-                //TODO: Make proper vector
-                .splineTo(new Vector2d(wobbleDropPose2.getX(), wobbleDropPose2.getY()), 0) //Drives back to correct spot for wobble drop off
+                .splineTo(secondDropPosition, 0)
                 .build();
-        Trajectory park = drive.trajectoryBuilder(dropSecondWobble.end())
-                .splineToSplineHeading(wobbleBackPose2, 0)
-                .splineTo(new Vector2d(12, 24), 0)
+        Trajectory park = drive.trajectoryBuilder(new Pose2d(secondDropPosition, 0),0)
+                .strafeTo(parkPosition)
                 .build();
-        //Wobble drop should be at the end of the previous or at the beginning of the next one
-//        Trajectory goShoot = drive.trajectoryBuilder(dropSecondWobble.end())
-//
-//                .build();
 
-        drive.followTrajectory(dropFirstWobble);
-        sleep(360);
-        shootRings();
-        sleep(720);
-
-        drive.followTrajectory(toSecondWobble);
-        setWobbleClaw(true);
-        sleep(480);
-        raiseWobble();
-        //Servo drop wobble
-        //drive.followTrajectory(pickupSecondWobble);
-        //Servo grab wobble
-        drive.followTrajectory(dropSecondWobble);
-        hoverWobble();
-        sleep(720);
-        setWobbleClaw(false);
-        sleep(300);
-        raiseWobble();
-        drive.followTrajectory(park);
-        if (tfod != null) {
-            tfod.shutdown();
-        }
-        //Servo drop wobble
-        //drive.followTrajectory(goShoot);
-        //Shoot rings
-
-        //drive.followTrajectory(pickup);
-        //Spin motors to collect
+        output[0] = dropFirstWobble;
+        output[1] = getSecondWobble;
+        output[2] = dropSecondWobble;
+        output[3] = park;
+        return output;
     }
 }
-
-

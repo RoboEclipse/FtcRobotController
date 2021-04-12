@@ -33,7 +33,6 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -52,8 +51,9 @@ public class UltimateGoalTeleOp extends OpMode
     private double elevatorPosition = Constants.elevatorBottom;
     private double tiltPosition = Constants.bottomTilt;
     private double shooterAngle = Constants.setShooterAngle;
+    private double sideArmPosition = Constants.sideArmIn;
     private boolean ringPushReturn = false;
-
+    private boolean aPressed = false;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -135,8 +135,8 @@ public class UltimateGoalTeleOp extends OpMode
         //Collection
         if (gamepad2.left_trigger > 0.3) {
             if (Math.abs(elevatorPosition - Constants.elevatorTop) <= 0.05) {
-                elevatorPosition = Constants.elevatorBottom;
                 tiltPosition = Constants.bottomTilt;
+                elevatorPosition = Constants.elevatorBottom;
                 collectorPower = 0;
             } else {
                 collectorPower = -Constants.collectionPower;
@@ -162,11 +162,11 @@ public class UltimateGoalTeleOp extends OpMode
 
         //Elevator and tilt
         if (gamepad2.b) {
-            elevatorPosition = Constants.elevatorBottom;
             tiltPosition = Constants.bottomTilt;
+            elevatorPosition = Constants.elevatorBottom;
         } else if (gamepad2.a) {
-            elevatorPosition = Constants.elevatorTop;
             tiltPosition = Constants.topTilt;
+            elevatorPosition = Constants.elevatorTop;
             shooterPower = Constants.shooterPower;
         }
 
@@ -213,15 +213,32 @@ public class UltimateGoalTeleOp extends OpMode
         }
         */
 
+        if(gamepad1.a && !aPressed){
+            aPressed = true;
+            if(sideArmPosition == Constants.sideArmOut){
+                sideArmPosition = Constants.sideArmStraight;
+            }
+            else {
+                sideArmPosition = Constants.sideArmOut;
+            }
+        }
+        else if(!gamepad1.a){
+            aPressed = false;
+        }
+        if(gamepad1.b){
+            sideArmPosition = Constants.sideArmIn;
+        }
+
 
         myRobot.runWobbleMotor(wobbleMotorPower);
         myRobot.setWobbleClaw(wobbleServoPosition);
         myRobot.runCollector(collectorPower);
         myRobot.setRingPusher(ringPushPosition);
-        myRobot.setElevator(elevatorPosition);
         myRobot.setTilt(tiltPosition);
+        myRobot.setElevator(elevatorPosition);
         myRobot.runShooter(shooterPower);
         myRobot.setShooterAngle(shooterAngle);
+        myRobot.setSideArmServo(sideArmPosition);
 
         /*Should look like:
         2020-11-08 21:08:37.960 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
