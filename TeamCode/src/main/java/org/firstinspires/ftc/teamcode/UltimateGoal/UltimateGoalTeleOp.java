@@ -174,9 +174,9 @@ public class UltimateGoalTeleOp extends OpMode
         if (gamepad2.dpad_up) {
             shooterPower = Constants.shooterPower;
         } else if (gamepad2.dpad_left) {
-            shooterPower += 0.01;
+            shooterPower = 0.48;
         } else if (gamepad2.dpad_right) {
-            shooterPower -= 0.01;
+            shooterPower = 0.49;
         } else if (gamepad2.dpad_down) {
             shooterPower = 0;
         }
