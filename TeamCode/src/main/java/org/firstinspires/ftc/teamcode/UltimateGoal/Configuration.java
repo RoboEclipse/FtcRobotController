@@ -23,6 +23,7 @@ public class Configuration {
     //Distance Sensors
     final String frontDistance = "frontDistance";
     final String leftDistance = "leftDistance";
+    final String rightDistance = "rightDistance";
     final String clawDistance = "clawDistance";
 
 }

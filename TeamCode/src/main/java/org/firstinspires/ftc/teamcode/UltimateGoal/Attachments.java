@@ -16,7 +16,8 @@ public class Attachments extends Drivetrain {
     private ElapsedTime runtime = new ElapsedTime();
     public Configuration names = new Configuration();
     public DcMotor collectionMotor, wobbleGoalMotor, shooterMotor;
-    public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo, shooterTiltServo, sideArmServo;
+    public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo, shooterTiltServo;
+    public DistanceSensor clawDistance, frontDistance, leftDistance, rightDistance;
 
     //Backend
     void initialize(HardwareMap hardwareMap, Telemetry telemetry_){
@@ -37,7 +38,7 @@ public class Attachments extends Drivetrain {
         sideArmServo = hardwareMap.servo.get(names.sideArmServo);
 
         //Sensors
-        clawDistance = hardwareMap.get(DistanceSensor.class, names.clawDistance);
+        rightDistance = hardwareMap.get(DistanceSensor.class, names.rightDistance);
         frontDistance = hardwareMap.get(DistanceSensor.class, names.frontDistance);
         leftDistance = hardwareMap.get(DistanceSensor.class, names.leftDistance);
 
@@ -74,6 +75,9 @@ public class Attachments extends Drivetrain {
     void setShooterAngle(double position) {shooterTiltServo.setPosition(position); 
     void setSideArmServo(double position) {
         sideArmServo.setPosition(position);
+    }
+    double getRightDistance(){
+        return rightDistance.getDistance(DistanceUnit.INCH);
     }
 
     double getShooterAngle() {return(shooterTiltServo.getPosition()); }
