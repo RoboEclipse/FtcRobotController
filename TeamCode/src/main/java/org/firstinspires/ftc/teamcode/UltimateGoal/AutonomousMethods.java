@@ -100,10 +100,11 @@ abstract public class AutonomousMethods extends LinearOpMode {
         double heading = myRobot.getAngle();
         if(myRobot.getAngle()>-5 && myRobot.getAngle()<5){
             x = 72-9-myRobot.getFrontDistance();
-            y = 72-9-myRobot.getLeftDistance();
+            y = 72-8.5-myRobot.getLeftDistance();
         }
         if(myRobot.getAngle()<-175 || myRobot.getAngle()>175){
             x = -72+9+myRobot.getFrontDistance();
+            y = 72-8.5-myRobot.getRightDistance();
         }
         return new Pose2d(x, y, heading);
     }
