@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
 @Autonomous(group = "drive")
-public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
+public class newRouteTest extends AutonomousMethods {
     private FtcDashboard dashboard;
 
     // String for holding detection
@@ -24,7 +24,7 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
     @Override
     public void runOpMode() {
         initializeAutonomousAttachments(hardwareMap, telemetry);
-        telemetry.addData("Initialization: ", "In Progress");
+        telemetry.addData("Initialization", "In Progress");
         telemetry.update();
 
         boolean isRed = false;
@@ -43,34 +43,32 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         }
 
         //Create Vectors and Poses
-        Pose2d startPose = new Pose2d(-63, 48, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(-63, 55.5, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
         Vector2d firstDropPositionClose = new Vector2d(5,51);
         Vector2d firstDropPositionMid = new Vector2d(27,27);
         Vector2d firstDropPositionFar = new Vector2d(52,48);
-        Vector2d ringVector = new Vector2d(-50, 39);
+        Vector2d ringVector = new Vector2d(-50, 60);
         Vector2d shootVector = new Vector2d(-5, 38);
         Vector2d secondGrabPositionClose = new Vector2d(-36, 20);
         Vector2d secondGrabPositionMid = new Vector2d(-33.75, 17);
         Vector2d secondGrabPositionFar = new Vector2d(-37, 28);
 
         //Generate constant trajectories
-        Trajectory toRing = drive.trajectoryBuilder(startPose)
+        Trajectory toShoot = drive.trajectoryBuilder(startPose)
                 .addTemporalMarker(0, () -> {
                     raiseWobble();
                     setWobbleClaw(true);
                     setShooterAngle(Constants.setShooterAngle);
                 })
                 .splineToConstantHeading(ringVector, 0) //Goes right in front of the ring
-                .build();
-        Trajectory toShoot = drive.trajectoryBuilder(new Pose2d(ringVector, 0), 0)
-                .addTemporalMarker(0, () -> {
+                .addDisplacementMarker(() -> {
                     hoverWobble();
                 })
-                .addTemporalMarker(0.1, () -> {
+                .addTemporalMarker(2.1, () -> {
                     prepShooter();
                 })
-                .splineToConstantHeading(new Vector2d(-30, 60), 0)
+                //.splineToConstantHeading(new Vector2d(-30, 60), 0)
                 .splineToConstantHeading(new Vector2d(-12, 60), 0)
                 .splineToConstantHeading(shootVector, 0) // Goes to shooting position
                 .build();
@@ -80,24 +78,11 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         Trajectory[] farTrajectories = generateRoute(drive, firstDropPositionFar, secondGrabPositionFar);
         Trajectory[] driveTrajectories;
 
-        telemetry.addData("Initialization: ", "Finished");
+        telemetry.addData("Initialization", "Finished");
         telemetry.update();
 
         waitForStart();
 
-        //Drive to ring
-        drive.followTrajectory(toRing);
-        //getWobbleDropPose
-        sleep(1200);
-        detection = getWobbleDropPose();
-        //Set trajectories based on ring detection
-        if (detection.equals("Quad")) {
-            driveTrajectories = farTrajectories;
-        } else if (detection.equals("Single")) {
-            driveTrajectories = midTrajectories;
-        } else {
-            driveTrajectories = closeTrajectories;
-        }
         //Go to shoot location and power up shooter motor
         drive.followTrajectory(toShoot);
         //Correct imu
@@ -107,6 +92,16 @@ public class blueLeftAutonomousDetectionPreLoad extends AutonomousMethods {
         //Shoot
         sleep(1008);
         shootRings();
+        //getWobbleDropPose
+        detection = getWobbleDropPose();
+        //Set trajectories based on ring detection
+        if (detection.equals("Quad")) {
+            driveTrajectories = farTrajectories;
+        } else if (detection.equals("Single")) {
+            driveTrajectories = midTrajectories;
+        } else {
+            driveTrajectories = closeTrajectories;
+        }
         //Drive to first goal drop position
         drive.followTrajectory(driveTrajectories[0]);
         //Drop first goal

@@ -43,6 +43,7 @@ public class UltimateGoalTeleOp extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private Attachments myRobot = new Attachments();
+    private double prevTime = 0;
     private double wobbleServoPosition = Constants.wobbleClose;
     private double wobbleMotorPower = Constants.wobbleHoldingPower;
     private double collectorPower = 0;
@@ -53,6 +54,7 @@ public class UltimateGoalTeleOp extends OpMode
     private double shooterAngle = Constants.setShooterAngle;
     private double sideArmPosition = Constants.sideArmIn;
     private boolean ringPushReturn = false;
+    private int ringPushStep = -1;
     private boolean aPressed = false;
     /*
      * Code to run ONCE when the driver hits INIT
@@ -156,7 +158,18 @@ public class UltimateGoalTeleOp extends OpMode
             ringPushPosition = Constants.ringPush;
             ringPushReturn = true;
         } else if (gamepad2.right_bumper) {
-            ringPushPosition = Constants.ringPushBack;
+            ringPushStep = 1;
+            //ringPushPosition = Constants.ringPushBack;
+        }
+        if ((ringPushStep != -1) && (runtime.milliseconds() - prevTime >= 720)) {
+            ringPushPosition = Constants.ringPush;
+            ringPushReturn = true;
+            if (ringPushStep != 3) {
+                ringPushStep++;
+                prevTime = runtime.milliseconds();
+            } else {
+                ringPushStep = -1;
+            }
         }
 
 
@@ -245,6 +258,8 @@ public class UltimateGoalTeleOp extends OpMode
         2020-11-08 21:08:37.964 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
         */
 
+        telemetry.addData("FrontDistance", myRobot.getFrontDistance());
+        telemetry.addData("LeftDistance", myRobot.getLeftDistance());
         telemetry.addData("wobbleMotorPower", wobbleMotorPower);
         telemetry.addData("wobbleMotorPosition", myRobot.getWobbleMotorPosition());
         telemetry.addData("wobbleServoPosition", wobbleServoPosition);
@@ -271,7 +286,6 @@ public class UltimateGoalTeleOp extends OpMode
             myRobot.getOdometryWheels()
         );
         Log.d("ArmEncoder", String.valueOf(myRobot.getWobbleMotorPosition()));
-
     }
 
     /*
