@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.UltimateGoal;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,7 +18,7 @@ public class Attachments extends Drivetrain {
     public Configuration names = new Configuration();
     public DcMotor collectionMotor, wobbleGoalMotor, shooterMotor;
     public Servo wobbleGoalServo, ringPushServo, elevatorServo, tiltServo, shooterTiltServo, sideArmServo;
-    public DistanceSensor clawDistance, frontDistance, leftDistance;
+    public Rev2mDistanceSensor frontDistance, leftDistance;
 
     //Backend
     void initialize(HardwareMap hardwareMap, Telemetry telemetry_){
@@ -38,9 +39,9 @@ public class Attachments extends Drivetrain {
         sideArmServo = hardwareMap.servo.get(names.sideArmServo);
 
         //Sensors
-        clawDistance = hardwareMap.get(DistanceSensor.class, names.clawDistance);
-        frontDistance = hardwareMap.get(DistanceSensor.class, names.frontDistance);
-        leftDistance = hardwareMap.get(DistanceSensor.class, names.leftDistance);
+        //clawDistance = hardwareMap.get(DistanceSensor.class, names.clawDistance);
+        frontDistance = hardwareMap.get(Rev2mDistanceSensor.class, names.frontDistance);
+        leftDistance = hardwareMap.get(Rev2mDistanceSensor.class, names.leftDistance);
 
         // Motor initalization
         collectionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
