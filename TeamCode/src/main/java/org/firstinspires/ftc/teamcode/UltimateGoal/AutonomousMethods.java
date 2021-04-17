@@ -53,9 +53,9 @@ abstract public class AutonomousMethods extends LinearOpMode {
     // Game specific stuff (NEEDS ATTACHMENTS)
     public void shootRings() {
         myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
-        sleep(240);
+        sleep(360);
         myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-        sleep(1296);
+        sleep(900);
         for (int i = 0; i < 3; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
             sleep(240);
@@ -71,7 +71,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.elevatorServo.setPosition(Constants.elevatorTop);
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
-        myRobot.shooterMotor.setPower(-(Constants.shooterPower - 0.003)); //Was 0.004
+        myRobot.shooterMotor.setPower(-(Constants.shooterPower - 0.00025)); //Was 0.004
     }
 
     public void setCollectorPower(int collectorPower) {
@@ -94,40 +94,17 @@ abstract public class AutonomousMethods extends LinearOpMode {
         setWobbleMotorPosition(0.9, Constants.wobbleHover);
     }
 
-    public void autoAdjust(double targetDistance) {
-        final double tolerance = 1;
-        final double maxSpeed = 0.84;
-        final double distanceCap = 15;
-        double leftDistance = myRobot.getLeftDistance();
-        double rightDistance = myRobot.getFrontDistance();
-        double leftError = leftDistance - targetDistance;
-        double rightError = rightDistance - targetDistance;
-        while (opModeIsActive() && (Math.abs(leftError) > tolerance || Math.abs(rightError) > tolerance)){
-            leftDistance = myRobot.getLeftDistance();
-            rightDistance = myRobot.getFrontDistance();
-            leftError = leftDistance - targetDistance;
-            rightError = rightDistance - targetDistance;
-            double distanceDifference = Math.abs(leftError) - Math.abs(rightError);
-            double leftPower = Math.min(leftError, distanceCap)*maxSpeed/distanceCap;
-            double rightPower = Math.min(rightError, distanceCap)*maxSpeed/distanceCap;
-            //if |leftError| is much greater than |rightError|
-            if(distanceDifference > 1){
-                leftPower *= 1.5;
-                leftPower = Math.min(leftPower, 1);
-            }
-            //if |rightError| is much greater than |leftError|
-            //TODO: right error(?) should have a higher multiplier (the side the sensors aren't on)
-            if(distanceDifference < -1){
-                rightPower *= 1.5;
-                rightPower = Math.min(rightPower, 1);
-            }
-            myRobot.lf.setPower(leftPower);
-            myRobot.lb.setPower(leftPower);
-            myRobot.rf.setPower(rightPower);
-            myRobot.rb.setPower(rightPower);
-            telemetry.addData("leftDistance", leftDistance);
-            telemetry.addData("rightDistance", rightDistance);
-            telemetry.update();
+    public Pose2d refreshPose(Pose2d currentPose){
+        double x = currentPose.getX();
+        double y = currentPose.getY();
+        double heading = myRobot.getAngle();
+        if(myRobot.getAngle()>-5 && myRobot.getAngle()<5){
+            x = 72-9-myRobot.getFrontDistance();
+            y = 72-8.5-myRobot.getLeftDistance();
+        }
+        if(myRobot.getAngle()<-175 || myRobot.getAngle()>175){
+            x = -72+9+myRobot.getFrontDistance();
+            y = 72-8.5-myRobot.getLeftDistance(); //TODO: Temporary solution, needs fix
         }
     }
 
