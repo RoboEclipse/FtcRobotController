@@ -53,9 +53,9 @@ abstract public class AutonomousMethods extends LinearOpMode {
     // Game specific stuff (NEEDS ATTACHMENTS)
     public void shootRings() {
         myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
-        sleep(240);
+        sleep(360);
         myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-        sleep(1296);
+        sleep(900);
         for (int i = 0; i < 3; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
             sleep(240);
@@ -71,7 +71,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.elevatorServo.setPosition(Constants.elevatorTop);
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
-        myRobot.shooterMotor.setPower(-(Constants.shooterPower - 0.003)); //Was 0.004
+        myRobot.shooterMotor.setPower(-(Constants.shooterPower - 0.00025)); //Was 0.004
     }
 
     public void setCollectorPower(int collectorPower) {
@@ -104,7 +104,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         }
         if(myRobot.getAngle()<-175 || myRobot.getAngle()>175){
             x = -72+9+myRobot.getFrontDistance();
-            y = 72-8.5-myRobot.getRightDistance();
+            y = 72-8.5-myRobot.getLeftDistance(); //TODO: Temporary solution, needs fix
         }
         return new Pose2d(x, y, heading);
     }
