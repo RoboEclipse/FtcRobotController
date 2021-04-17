@@ -77,7 +77,7 @@ public class PoseRefreshTest extends AutonomousMethods {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             Pose2d testPose = new Pose2d(0, 0, 0);
-            telemetry.addData("Pose", refreshPose(testPose));
+            //telemetry.addData("Pose", refreshPose(testPose));
             telemetry.update();
         }
     }
