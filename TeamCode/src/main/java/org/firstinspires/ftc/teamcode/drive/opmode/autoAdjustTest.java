@@ -30,6 +30,21 @@ public class autoAdjustTest extends AutonomousMethods {
 
         waitForStart();
 
-        autoAdjust(10);
+        lowerWobble();
+        setWobbleClaw(false);
+        telemetry.addData("Current Step", "Ready to grab");
+        telemetry.update();
+        sleep(360);
+        autoAdjust(8);
+        telemetry.addData("Current Step", "Reached optimal distance");
+        telemetry.update();
+        sleep(720);
+        setWobbleClaw(true);
+        sleep(720);
+        raiseWobble();
+        telemetry.addData("Current Step", "Finished grabbing");
+        telemetry.update();
+
+        sleep(720);
     }
 }

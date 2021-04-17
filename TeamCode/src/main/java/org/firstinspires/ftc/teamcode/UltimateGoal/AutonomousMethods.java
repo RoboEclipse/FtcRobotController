@@ -96,7 +96,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
     public void autoAdjust(double targetDistance) {
         final double tolerance = 1;
-        final double maxSpeed = 0.5;
+        final double maxSpeed = 0.84;
         final double distanceCap = 15;
         double leftDistance = myRobot.getLeftDistance();
         double rightDistance = myRobot.getFrontDistance();
@@ -107,12 +107,27 @@ abstract public class AutonomousMethods extends LinearOpMode {
             rightDistance = myRobot.getFrontDistance();
             leftError = leftDistance - targetDistance;
             rightError = rightDistance - targetDistance;
+            double distanceDifference = Math.abs(leftError) - Math.abs(rightError);
             double leftPower = Math.min(leftError, distanceCap)*maxSpeed/distanceCap;
             double rightPower = Math.min(rightError, distanceCap)*maxSpeed/distanceCap;
+            //if |leftError| is much greater than |rightError|
+            if(distanceDifference > 1){
+                leftPower *= 1.5;
+                leftPower = Math.min(leftPower, 1);
+            }
+            //if |rightError| is much greater than |leftError|
+            //TODO: right error(?) should have a higher multiplier (the side the sensors aren't on)
+            if(distanceDifference < -1){
+                rightPower *= 1.5;
+                rightPower = Math.min(rightPower, 1);
+            }
             myRobot.lf.setPower(leftPower);
             myRobot.lb.setPower(leftPower);
             myRobot.rf.setPower(rightPower);
             myRobot.rb.setPower(rightPower);
+            telemetry.addData("leftDistance", leftDistance);
+            telemetry.addData("rightDistance", rightDistance);
+            telemetry.update();
         }
     }
 
