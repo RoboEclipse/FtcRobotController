@@ -113,16 +113,19 @@ public class newRouteTest extends AutonomousMethods {
         //Drive to second goal pickup location
         //TODO: Split trajectory, add a refreshPose right before grabbing
         drive.followTrajectory(driveTrajectories[1]);
-        //Readjust
-        double targetHeading = driveTrajectories[1].end().getHeading();
         encoderTurn(120,1,3);
-        drive.setPoseEstimate(new Pose2d(driveTrajectories[1].end().vec(), targetHeading));
-        drive.followTrajectory(driveTrajectories[2]);
+
+        //drive.followTrajectory(driveTrajectories[2]);
+        autoAdjust(8.3);
+
         //Pick up second goal
         sleep(500);
         setWobbleClaw(true);
         sleep(500);
         hoverWobble();
+        //Readjust
+        double currentHeading = getHorizontalAngle();
+        drive.setPoseEstimate(new Pose2d(driveTrajectories[2].end().vec(), Math.toRadians(currentHeading)));
         //Drive to second goal drop position
         drive.followTrajectory(driveTrajectories[3]);
         //Drop second goal
