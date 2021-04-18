@@ -52,11 +52,11 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
     // Game specific stuff (NEEDS ATTACHMENTS)
     public void shootRings() {
-        myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
-        sleep(360);
-        myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-        sleep(900);
-        for (int i = 0; i < 3; i++) {
+//        myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
+//        sleep(360);
+//        myRobot.ringPushServo.setPosition(Constants.ringPushBack);
+//        sleep(900);
+        for (int i = 0; i < 4; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
             sleep(240);
             myRobot.ringPushServo.setPosition(Constants.ringPushBack);
@@ -71,7 +71,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.elevatorServo.setPosition(Constants.elevatorTop);
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
-        myRobot.shooterMotor.setPower(-(Constants.shooterPower - 0.00025)); //Was 0.004
+        myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.000125)); //Was 0.004
     }
 
     public void setCollectorPower(int collectorPower) {
