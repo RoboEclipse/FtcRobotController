@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutoTransitioner;
 import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.UltimateGoal.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Config
-@Autonomous(group = "drive")
-public class newRouteTest extends AutonomousMethods {
+public class distanceSensorOpModeTest extends AutonomousMethods {
     private FtcDashboard dashboard;
 
     // String for holding detection
@@ -32,7 +27,6 @@ public class newRouteTest extends AutonomousMethods {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         setWobbleClaw(true);
-        prepElevator();
 
         initVuforia();
         initTfod();
@@ -52,9 +46,7 @@ public class newRouteTest extends AutonomousMethods {
         Vector2d firstDropPositionFar = new Vector2d(52,59);
         Vector2d ringVector = new Vector2d(-50, 60);
         Vector2d shootVector = new Vector2d(-6, 34);
-        Vector2d secondGrabPositionClose = new Vector2d(-37, 15);
-        Vector2d secondGrabPositionMid = new Vector2d(-38, 15);
-        Vector2d secondGrabPositionFar = new Vector2d(-44, 25);
+
 
         //Generate constant trajectories
         Trajectory toShoot = drive.trajectoryBuilder(startPose)
@@ -75,9 +67,9 @@ public class newRouteTest extends AutonomousMethods {
                 .splineToConstantHeading(shootVector, 0) // Goes to shooting position
                 .build();
         //Generate variable trajectory sets
-        Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose, secondGrabPositionClose);
-        Trajectory[] midTrajectories = generateRoute(drive, firstDropPositionMid, secondGrabPositionMid);
-        Trajectory[] farTrajectories = generateRoute(drive, firstDropPositionFar, secondGrabPositionFar);
+        Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose);
+        Trajectory[] midTrajectories = generateRoute(drive, firstDropPositionMid);
+        Trajectory[] farTrajectories = generateRoute(drive, firstDropPositionFar);
         Trajectory[] driveTrajectories;
 
         telemetry.addData("Initialization", "Finished");
@@ -110,7 +102,7 @@ public class newRouteTest extends AutonomousMethods {
         sleep(500);
         raiseWobble();
         sleep(500);
-        //Drive to second goal pickup location
+        //Drive to corner
         //TODO: Split trajectory, add a refreshPose right before grabbing
         drive.followTrajectory(driveTrajectories[1]);
         //Readjust
@@ -135,47 +127,41 @@ public class newRouteTest extends AutonomousMethods {
         AutoTransitioner.transitionOnStop(this, "TeleOp");
     }
 
-    private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition){
-        Trajectory[] output = new Trajectory[5];
-        Vector2d shootVector = new Vector2d(-6, 30);
-        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-6,3));
+    private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition){
+        Trajectory[] output = new Trajectory[6];
+        Vector2d shootVector = new Vector2d(-6, 34);
+        Vector2d prepVector = new Vector2d(0, 64);
+        Vector2d cornerVector = new Vector2d(-64,64);
+        Vector2d secondGrabPosition = new Vector2d(-37, 14);
+        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-3,3));
 
         Vector2d parkPosition = new Vector2d(11.5, 22);
 
         Trajectory dropFirstWobble = drive.trajectoryBuilder(new Pose2d(shootVector, 0), 0) //Start at shoot position
                 .strafeTo(firstDropPosition) //Go to firstDropPosition
                 .build();
-        Trajectory getSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
-                .addTemporalMarker(1.6, () -> {
-                    lowerWobble();
-                })
-                .back(10)
-                .splineToConstantHeading(new Vector2d(0, 38), 0)
-                //.splineToConstantHeading(new Vector2d(-6, 38), 0)
-                .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
-                //.splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
-                .splineTo(secondGrabPosition.plus(new Vector2d(8, -9)), Math.toRadians(120))
+        Trajectory toCornerFirst = drive.trajectoryBuilder(dropFirstWobble.end())
+                .splineTo(prepVector, 0)
+                .splineTo(cornerVector, 0)
                 .build();
-        Trajectory toSecondWobble = drive.trajectoryBuilder(getSecondWobble.end())
-                .lineToConstantHeading(secondGrabPosition)
+        Trajectory grabSecondWobble = drive.trajectoryBuilder(new Pose2d(toCornerFirst.end().vec(), Math.toRadians(-90)))
+                .splineTo(secondGrabPosition, Math.toRadians(-90))
                 .build();
-        Trajectory dropSecondWobble = drive.trajectoryBuilder(toSecondWobble.end())
-                .splineTo(new Vector2d(-48, 48), Math.toRadians(90))
-                .splineTo(new Vector2d(-36, 57), Math.toRadians(0))
+        Trajectory toCornerSecond = drive.trajectoryBuilder(grabSecondWobble.end())
+                .splineTo((cornerVector), Math.toRadians(-90))
+                .build();
+        Trajectory dropSecondWobble = drive.trajectoryBuilder(new Pose2d(toCornerSecond.end().vec(), 0))
                 .splineTo(secondDropPosition, 0)
                 .build();
         Trajectory park = drive.trajectoryBuilder(new Pose2d(secondDropPosition, 0),0)
-                .addTemporalMarker(0, () -> {
-                    setWobbleMotorPosition(0.9, 0);
-                })
                 .strafeTo(parkPosition)
                 .build();
-
         output[0] = dropFirstWobble;
-        output[1] = getSecondWobble;
-        output[2] = toSecondWobble;
-        output[3] = dropSecondWobble;
-        output[4] = park;
+        output[1] = toCornerFirst;
+        output[2] = grabSecondWobble;
+        output[3] = toCornerSecond;
+        output[4] = dropSecondWobble;
+        output[5] = park;
         return output;
     }
 }
