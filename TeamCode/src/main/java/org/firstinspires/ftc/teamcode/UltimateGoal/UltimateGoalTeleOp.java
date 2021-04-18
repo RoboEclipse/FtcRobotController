@@ -56,7 +56,7 @@ public class UltimateGoalTeleOp extends OpMode
     private double sideArmPosition = Constants.sideArmIn;
     private boolean ringPushReturn = false;
     private int ringPushStep = -1;
-    private boolean aPressed = false;
+    private boolean bPressed = false;
     private double referenceAngle = 0;
 
     /*
@@ -243,8 +243,8 @@ public class UltimateGoalTeleOp extends OpMode
         }
         */
 
-        if(gamepad1.a && !aPressed){
-            aPressed = true;
+        if(gamepad1.b && !bPressed){
+            bPressed = true;
             if(sideArmPosition == Constants.sideArmOut){
                 sideArmPosition = Constants.sideArmStraight;
             }
@@ -252,10 +252,10 @@ public class UltimateGoalTeleOp extends OpMode
                 sideArmPosition = Constants.sideArmOut;
             }
         }
-        else if(!gamepad1.a){
-            aPressed = false;
+        else if(!gamepad1.b){
+            bPressed = false;
         }
-        if(gamepad1.b){
+        if(gamepad1.a){
             sideArmPosition = Constants.sideArmIn;
         }
 
