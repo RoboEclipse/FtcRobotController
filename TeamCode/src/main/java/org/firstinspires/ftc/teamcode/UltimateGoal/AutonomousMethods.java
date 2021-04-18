@@ -94,19 +94,55 @@ abstract public class AutonomousMethods extends LinearOpMode {
         setWobbleMotorPosition(0.9, Constants.wobbleHover);
     }
 
-    public Pose2d refreshPose(Pose2d currentPose){
+    public Pose2d refreshPose(Pose2d currentPose) {
         double x = currentPose.getX();
         double y = currentPose.getY();
         double heading = myRobot.getAngle();
-        if(myRobot.getAngle()>-5 && myRobot.getAngle()<5){
-            x = 72-9-myRobot.getFrontDistance();
-            y = 72-8.5-myRobot.getLeftDistance();
+        if (myRobot.getAngle() > -5 && myRobot.getAngle() < 5) {
+            x = 72 - 9 - myRobot.getFrontDistance();
+            y = 72 - 8.5 - myRobot.getLeftDistance();
         }
-        if(myRobot.getAngle()<-175 || myRobot.getAngle()>175){
-            x = -72+9+myRobot.getFrontDistance();
-            y = 72-8.5-myRobot.getLeftDistance(); //TODO: Temporary solution, needs fix
+        if (myRobot.getAngle() < -175 || myRobot.getAngle() > 175) {
+            x = -72 + 9 + myRobot.getFrontDistance();
+            y = 72 - 8.5 - myRobot.getLeftDistance(); //TODO: Temporary solution, needs fix
         }
         return new Pose2d(x, y, heading);
+    }
+    public void autoAdjust(double targetDistance) {
+        final double tolerance = 1;
+        final double maxSpeed = 0.84;
+        final double distanceCap = 15;
+        double leftDistance = myRobot.getLeftDistance();
+        double rightDistance = myRobot.getFrontDistance();
+        double leftError = leftDistance - targetDistance;
+        double rightError = rightDistance - targetDistance;
+        while (opModeIsActive() && (Math.abs(leftError) > tolerance || Math.abs(rightError) > tolerance)){
+            leftDistance = myRobot.getLeftDistance();
+            rightDistance = myRobot.getFrontDistance();
+            leftError = leftDistance - targetDistance;
+            rightError = rightDistance - targetDistance;
+            double distanceDifference = Math.abs(leftError) - Math.abs(rightError);
+            double leftPower = Math.min(leftError, distanceCap)*maxSpeed/distanceCap;
+            double rightPower = Math.min(rightError, distanceCap)*maxSpeed/distanceCap;
+            //if |leftError| is much greater than |rightError|
+            if(distanceDifference > 1){
+                leftPower *= 1.5;
+                leftPower = Math.min(leftPower, 1);
+            }
+            //if |rightError| is much greater than |leftError|
+            //TODO: right error(?) should have a higher multiplier (the side the sensors aren't on)
+            if(distanceDifference < -1){
+                rightPower *= 1.5;
+                rightPower = Math.min(rightPower, 1);
+            }
+            myRobot.lf.setPower(leftPower);
+            myRobot.lb.setPower(leftPower);
+            myRobot.rf.setPower(rightPower);
+            myRobot.rb.setPower(rightPower);
+            telemetry.addData("leftDistance", leftDistance);
+            telemetry.addData("rightDistance", rightDistance);
+            telemetry.update();
+        }
     }
 
 //    public void grabWobble() {  // Grabs and raises wobble arm
