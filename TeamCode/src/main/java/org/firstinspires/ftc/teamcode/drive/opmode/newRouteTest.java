@@ -31,6 +31,7 @@ public class newRouteTest extends AutonomousMethods {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         setWobbleClaw(true);
+        prepElevator();
 
         initVuforia();
         initTfod();
@@ -50,7 +51,7 @@ public class newRouteTest extends AutonomousMethods {
         Vector2d firstDropPositionFar = new Vector2d(52,59);
         Vector2d ringVector = new Vector2d(-50, 60);
         Vector2d shootVector = new Vector2d(-6, 34);
-        Vector2d secondGrabPositionClose = new Vector2d(-37, 14);
+        Vector2d secondGrabPositionClose = new Vector2d(-37, 15);
         Vector2d secondGrabPositionMid = new Vector2d(-38, 15);
         Vector2d secondGrabPositionFar = new Vector2d(-44, 25);
 
