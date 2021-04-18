@@ -58,7 +58,7 @@ public class Constants {
     public static double shooterPower = 0.53; //0.7
     public static double autoShooterPower = 0.54;
 
-    public static double elevatorTop = 0.3;
+    public static double elevatorTop = 0.28;
     public static double elevatorBottom = 0.5;
 
     public static double topTilt = 0.74;
