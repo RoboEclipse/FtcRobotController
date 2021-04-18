@@ -52,11 +52,11 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
     // Game specific stuff (NEEDS ATTACHMENTS)
     public void shootRings() {
-        myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
-        sleep(240);
-        myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-        sleep(1296);
-        for (int i = 0; i < 3; i++) {
+//        myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
+//        sleep(360);
+//        myRobot.ringPushServo.setPosition(Constants.ringPushBack);
+//        sleep(900);
+        for (int i = 0; i < 4; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
             sleep(240);
             myRobot.ringPushServo.setPosition(Constants.ringPushBack);
@@ -71,7 +71,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.elevatorServo.setPosition(Constants.elevatorTop);
         myRobot.tiltServo.setPosition(Constants.topTilt);
         //TODO: Testing negative shooter power remove later
-        myRobot.shooterMotor.setPower(-(Constants.shooterPower - 0.003)); //Was 0.004
+        myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.000125)); //Was 0.004
     }
 
     public void setCollectorPower(int collectorPower) {
@@ -94,6 +94,20 @@ abstract public class AutonomousMethods extends LinearOpMode {
         setWobbleMotorPosition(0.9, Constants.wobbleHover);
     }
 
+    public Pose2d refreshPose(Pose2d currentPose) {
+        double x = currentPose.getX();
+        double y = currentPose.getY();
+        double heading = myRobot.getAngle();
+        if (myRobot.getAngle() > -5 && myRobot.getAngle() < 5) {
+            x = 72 - 9 - myRobot.getFrontDistance();
+            y = 72 - 8.5 - myRobot.getLeftDistance();
+        }
+        if (myRobot.getAngle() < -175 || myRobot.getAngle() > 175) {
+            x = -72 + 9 + myRobot.getFrontDistance();
+            y = 72 - 8.5 - myRobot.getLeftDistance(); //TODO: Temporary solution, needs fix
+        }
+        return new Pose2d(x, y, heading);
+    }
     public void autoAdjust(double targetDistance) {
         final double tolerance = 1;
         final double maxSpeed = 0.84;

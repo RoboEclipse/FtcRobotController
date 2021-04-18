@@ -35,7 +35,7 @@ public class Constants {
     //Autonomous constants
     static int wobbleTop = 500;
     static int wobbleHover = 1400;
-    static int wobbleBottom = 1608; //Used to be 1625
+    static int wobbleBottom = 1500; //Used to be 1625
 
 
     //Tele-op constants
@@ -47,7 +47,7 @@ public class Constants {
     public static double sideArmOut = 0.43;
     public static double sideArmIn = 0.1;
     public static double sideArmStraight = 0.63;
-
+    public static double imuTurnSpeed = 0.15;
 
     static double collectionPower = 1;
 

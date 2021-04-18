@@ -44,6 +44,7 @@ public class UltimateGoalTeleOp extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private Attachments myRobot = new Attachments();
     private double prevTime = 0;
+    private double prevPushTime = 0;
     private double wobbleServoPosition = Constants.wobbleClose;
     private double wobbleMotorPower = Constants.wobbleHoldingPower;
     private double collectorPower = 0;
@@ -55,7 +56,9 @@ public class UltimateGoalTeleOp extends OpMode
     private double sideArmPosition = Constants.sideArmIn;
     private boolean ringPushReturn = false;
     private int ringPushStep = -1;
-    private boolean aPressed = false;
+    private boolean bPressed = false;
+    private double referenceAngle = 0;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -116,7 +119,17 @@ public class UltimateGoalTeleOp extends OpMode
         double v_rotation = gamepad1.right_stick_x;
         myRobot.drive(theta,  speedMultiplier*v_theta, rotationMultiplier*v_rotation);
 
-
+        double currentAngle = myRobot.getAngle();
+        //TODO: Make this override properly
+        //Automation for powershot
+        if (gamepad1.left_bumper) {
+            imuTurn(referenceAngle+2, Constants.imuTurnSpeed);
+        } else if (gamepad1.right_bumper) {
+            imuTurn(referenceAngle-2, Constants.imuTurnSpeed);
+        }
+        else{
+            referenceAngle = currentAngle;
+        }
 
         //Wobble motor
         if (gamepad1.left_trigger > 0.3) {
@@ -126,6 +139,8 @@ public class UltimateGoalTeleOp extends OpMode
         } else {
             wobbleMotorPower = Constants.wobbleHoldingPower;
         }
+
+
 
         //Wobble claw
         if (gamepad1.x){
@@ -150,20 +165,22 @@ public class UltimateGoalTeleOp extends OpMode
         }
 
         //Ring pusher
-        if (ringPushReturn) {
+        if (ringPushReturn && (runtime.milliseconds() - prevPushTime >= 180)) {
             ringPushPosition = Constants.ringPushBack;
             ringPushReturn = false;
         }
         if (gamepad2.left_bumper) {
             ringPushPosition = Constants.ringPush;
             ringPushReturn = true;
+            prevPushTime = runtime.milliseconds();
         } else if (gamepad2.right_bumper) {
             ringPushStep = 1;
             //ringPushPosition = Constants.ringPushBack;
         }
-        if ((ringPushStep != -1) && (runtime.milliseconds() - prevTime >= 720)) {
+        if ((ringPushStep != -1) && (runtime.milliseconds() - prevTime >= 360)) {
             ringPushPosition = Constants.ringPush;
             ringPushReturn = true;
+            prevPushTime = runtime.milliseconds();
             if (ringPushStep != 3) {
                 ringPushStep++;
                 prevTime = runtime.milliseconds();
@@ -226,8 +243,8 @@ public class UltimateGoalTeleOp extends OpMode
         }
         */
 
-        if(gamepad1.a && !aPressed){
-            aPressed = true;
+        if(gamepad1.b && !bPressed){
+            bPressed = true;
             if(sideArmPosition == Constants.sideArmOut){
                 sideArmPosition = Constants.sideArmStraight;
             }
@@ -235,13 +252,12 @@ public class UltimateGoalTeleOp extends OpMode
                 sideArmPosition = Constants.sideArmOut;
             }
         }
-        else if(!gamepad1.a){
-            aPressed = false;
+        else if(!gamepad1.b){
+            bPressed = false;
         }
-        if(gamepad1.b){
+        if(gamepad1.a){
             sideArmPosition = Constants.sideArmIn;
         }
-
 
         myRobot.runWobbleMotor(wobbleMotorPower);
         myRobot.setWobbleClaw(wobbleServoPosition);
@@ -260,6 +276,7 @@ public class UltimateGoalTeleOp extends OpMode
 
         telemetry.addData("FrontDistance", myRobot.getFrontDistance());
         telemetry.addData("LeftDistance", myRobot.getLeftDistance());
+        telemetry.addData("Angle", currentAngle);
         telemetry.addData("wobbleMotorPower", wobbleMotorPower);
         telemetry.addData("wobbleMotorPosition", myRobot.getWobbleMotorPosition());
         telemetry.addData("wobbleServoPosition", wobbleServoPosition);
@@ -294,6 +311,24 @@ public class UltimateGoalTeleOp extends OpMode
     @Override
     public void stop() {
 
+    }
+
+    public void imuTurn(double targetAngle, double speed){
+
+        double currentAngle = myRobot.getAngle();
+        double error = currentAngle-targetAngle;
+        double leftPower = error*speed;
+        double rightPower = error*-speed;
+        myRobot.lf.setPower(leftPower);
+        myRobot.lb.setPower(leftPower);
+        myRobot.rf.setPower(rightPower);
+        myRobot.rb.setPower(rightPower);
+        /*
+        while(error>tolerance){
+            currentAngle = myRobot.getAngle();
+            error = currentAngle-targetAngle;
+        }
+        */
     }
 }
 
