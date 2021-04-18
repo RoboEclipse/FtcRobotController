@@ -67,10 +67,14 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.tiltServo.setPosition(Constants.bottomTilt);
     }
 
-    public void prepShooter() {
-        myRobot.elevatorServo.setPosition(Constants.elevatorTop);
+    public void prepElevator() {
         myRobot.tiltServo.setPosition(Constants.topTilt);
+        myRobot.elevatorServo.setPosition(Constants.elevatorTop);
+    }
+
+    public void prepShooter() {
         //TODO: Testing negative shooter power remove later
+        prepElevator();
         myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.000125)); //Was 0.004
     }
 
