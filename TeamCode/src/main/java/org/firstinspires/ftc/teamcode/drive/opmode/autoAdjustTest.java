@@ -47,4 +47,61 @@ public class autoAdjustTest extends AutonomousMethods {
 
         sleep(720);
     }
+
+    private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition){
+        Trajectory[] output = new Trajectory[8];
+        Vector2d shootVector = new Vector2d(-6, 34);
+        Vector2d prepVector = new Vector2d(0, 64);
+        Vector2d cornerVector = new Vector2d(-64,64);
+        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-3,3));
+
+        Vector2d parkPosition = new Vector2d(11.5, 22);
+
+        Trajectory dropFirstWobble = drive.trajectoryBuilder(new Pose2d(shootVector, 0), 0) //Start at shoot position
+                .strafeTo(firstDropPosition) //Go to firstDropPosition
+                .build();
+        Trajectory toPrepFirst = drive.trajectoryBuilder(dropFirstWobble.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                .splineTo(secondDropPosition, 0)
+                .build();
+        Trajectory toCornerFirst = drive.trajectoryBuilder(toPrepFirst.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                .splineTo(secondDropPosition, 0)
+                .build();
+        Trajectory grabSecondWobble = drive.trajectoryBuilder(toCornerFirst.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                .splineTo(secondDropPosition, 0)
+                .build();
+        Trajectory toCornerSecond = drive.trajectoryBuilder(grabSecondWobble.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                .splineTo(secondDropPosition, 0)
+                .build();
+        Trajectory toPrepSecond = drive.trajectoryBuilder(toCornerSecond.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                .splineTo(secondDropPosition, 0)
+                .build();
+        Trajectory dropSecondWobble = drive.trajectoryBuilder(toPrepSecond.end())
+                .splineTo(new Vector2d(-48, 42), Math.toRadians(90))
+                .splineTo(new Vector2d(-36, 54), Math.toRadians(0))
+                .splineTo(secondDropPosition, 0)
+                .build();
+        Trajectory park = drive.trajectoryBuilder(new Pose2d(secondDropPosition, 0),0)
+                .strafeTo(parkPosition)
+                .build();
+        output[0] = dropFirstWobble;
+        output[1] = toPrepFirst;
+        output[2] = toCornerFirst;
+        output[3] = grabSecondWobble;
+        output[4] = toCornerSecond;
+        output[5] = toPrepSecond;
+        output[6] = dropSecondWobble;
+        output[7] = park;
+        return output;
+    }
+
 }
