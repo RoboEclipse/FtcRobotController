@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
-    public static double DISTANCE = 50; // in
+    public static double DISTANCE = 96; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
