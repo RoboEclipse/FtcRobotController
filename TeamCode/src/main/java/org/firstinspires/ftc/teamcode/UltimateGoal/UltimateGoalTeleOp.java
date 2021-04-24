@@ -181,7 +181,7 @@ public class UltimateGoalTeleOp extends OpMode
             ringPushPosition = Constants.ringPush;
             ringPushReturn = true;
             prevPushTime = runtime.milliseconds();
-            if (ringPushStep != 3) {
+            if (ringPushStep != 2) {
                 ringPushStep++;
                 prevTime = runtime.milliseconds();
             } else {

@@ -25,23 +25,22 @@ public class autoAdjustTest extends AutonomousMethods {
         initializeAutonomousAttachments(hardwareMap, telemetry);
         telemetry.addData("Initialization", "In Progress");
         telemetry.update();
+        setWobbleClaw(false);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         telemetry.addData("Initialization", "Finished");
         telemetry.update();
 
         waitForStart();
 
-        // lowerWobble();
-        setWobbleClaw(false);
         telemetry.addData("Current Step", "Ready to grab");
         telemetry.update();
         sleep(360);
-        autoAdjust(8);
+        autoAdjust(8.1, drive);
         telemetry.addData("Current Step", "Reached optimal distance");
         telemetry.update();
         sleep(720);
         setWobbleClaw(true);
         sleep(720);
-        raiseWobble();
         telemetry.addData("Current Step", "Finished grabbing");
         telemetry.update();
 

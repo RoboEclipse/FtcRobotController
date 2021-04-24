@@ -6,6 +6,7 @@ import android.util.Log;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.skyStoneArchive.SKYSTONEAutonomousConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,11 +54,11 @@ abstract public class AutonomousMethods extends LinearOpMode {
 
     // Game specific stuff (NEEDS ATTACHMENTS)
     public void shootRings() {
-//        myRobot.ringPushServo.setPosition(Constants.ringPush+.1);
-//        sleep(360);
-//        myRobot.ringPushServo.setPosition(Constants.ringPushBack);
-//        sleep(900);
-        for (int i = 0; i < 4; i++) {
+        myRobot.ringPushServo.setPosition(Constants.ringPush-.2);
+        sleep(240);
+        myRobot.ringPushServo.setPosition(Constants.ringPushBack);
+        sleep(720);
+        for (int i = 0; i < 3; i++) {
             myRobot.ringPushServo.setPosition(Constants.ringPush);
             sleep(240);
             myRobot.ringPushServo.setPosition(Constants.ringPushBack);
@@ -75,7 +77,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
     public void prepShooter() {
         //TODO: Testing negative shooter power remove later
         prepElevator();
-        myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.000125)); //Was 0.004
+        myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.00003)); //Was 0.004
     }
 
     public void setCollectorPower(int collectorPower) {
@@ -97,8 +99,13 @@ abstract public class AutonomousMethods extends LinearOpMode {
     public void hoverWobble() {
         setWobbleMotorPosition(0.9, Constants.wobbleHover);
     }
-
-    public Pose2d refreshPose(Pose2d currentPose){
+    public double autonomousGetLeftDistance(){
+        return myRobot.getLeftDistance();
+    }
+    public double autonomousGetFrontDistance(){
+        return myRobot.getFrontDistance();
+    }
+    public Pose2d refreshPose(Pose2d currentPose) {
         double x = currentPose.getX();
         double y = currentPose.getY();
         double heading = myRobot.getAngle();
@@ -112,16 +119,30 @@ abstract public class AutonomousMethods extends LinearOpMode {
         }
         return new Pose2d(x, y, heading);
     }
-    public void autoAdjust(double targetDistance) {
+    public void autoAdjust(double targetDistance, SampleMecanumDrive drive) {
+        ElapsedTime killTimer = new ElapsedTime();
+        double startTime = killTimer.milliseconds();
         final double tolerance = 1;
         final double maxSpeed = 0.84;
-        final double minSpeed = 0.1;
-        final double distanceCap = 15;
+        final double minSpeed = 0.08;
+        final double distanceCap = 23;
         double leftDistance = myRobot.getLeftDistance();
         double rightDistance = myRobot.getFrontDistance();
         double leftError = leftDistance - targetDistance;
         double rightError = rightDistance - targetDistance;
-        while (opModeIsActive() && (Math.abs(leftError) > tolerance || Math.abs(rightError) > tolerance)){
+        Localizer localizer = drive.getLocalizer();
+        localizer.update();
+        Pose2d startPose = localizer.getPoseEstimate();
+        while (opModeIsActive()
+                && (Math.abs(leftError) > tolerance)
+                && (Math.abs(rightError) > tolerance)
+                && (killTimer.milliseconds() <= 2000)){
+            localizer.update();
+            Pose2d myPose = localizer.getPoseEstimate();
+            Pose2d differencePose = myPose.minus(startPose);
+            if (Math.sqrt(Math.pow(differencePose.getX(), 2) + Math.pow(differencePose.getY(), 2)) >= 18) {
+                break;
+            }
             leftDistance = myRobot.getLeftDistance();
             rightDistance = myRobot.getFrontDistance();
             leftError = leftDistance - targetDistance;
@@ -132,17 +153,21 @@ abstract public class AutonomousMethods extends LinearOpMode {
             double rightPower = Math.min(rightError, distanceCap)*maxSpeed/distanceCap;
             double leftSpeed = Math.max(Math.abs(leftPower), minSpeed);
             double rightSpeed = Math.max(Math.abs(rightPower), minSpeed);
-            leftPower = leftSpeed*Math.signum(leftPower);
-            rightPower = rightSpeed*Math.signum(rightPower);
+            if(Math.abs(leftError)>tolerance){
+                leftPower = leftSpeed*Math.signum(leftPower);
+            }
+            if(Math.abs(rightError)>tolerance){
+                rightPower = rightSpeed*Math.signum(rightPower);
+            }
             //if |leftError| is much greater than |rightError|
             if(distanceDifference > 1){
-                leftPower *= 1.5;
+                leftPower *= 1.1;
                 leftPower = Math.min(leftPower, 1);
             }
             //if |rightError| is much greater than |leftError|
             //TODO: right error(?) should have a higher multiplier (the side the sensors aren't on)
             if(distanceDifference < -1){
-                rightPower *= 1.5;
+                rightPower *= 1.3;
                 rightPower = Math.min(rightPower, 1);
             }
             myRobot.lf.setPower(leftPower);
@@ -151,9 +176,16 @@ abstract public class AutonomousMethods extends LinearOpMode {
             myRobot.rb.setPower(rightPower);
             telemetry.addData("leftDistance", leftDistance);
             telemetry.addData("rightDistance", rightDistance);
+            telemetry.addData("timer", killTimer.toString());
             telemetry.update();
->>>>>>> Added distance-sensor based adjustment to current route.
+            Log.d("leftDistance", String.valueOf(leftDistance));
+            Log.d("rightDistance", String.valueOf(rightDistance));
+            Log.d("timer", killTimer.toString());
         }
+        myRobot.lf.setPower(0);
+        myRobot.lb.setPower(0);
+        myRobot.rf.setPower(0);
+        myRobot.rb.setPower(0);
     }
 
 //    public void grabWobble() {  // Grabs and raises wobble arm
