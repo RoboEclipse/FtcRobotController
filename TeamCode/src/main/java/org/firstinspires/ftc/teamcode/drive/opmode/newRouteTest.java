@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.UltimateGoal.AutonomousMethods;
 import org.firstinspires.ftc.teamcode.UltimateGoal.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+import java.util.Vector;
+
 @Config
 @Autonomous(group = "drive")
 public class newRouteTest extends AutonomousMethods {
@@ -47,26 +49,28 @@ public class newRouteTest extends AutonomousMethods {
         //Create Vectors and Poses
         Pose2d startPose = new Pose2d(-63, 55.5, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
-        Vector2d firstDropPositionClose = new Vector2d(3.5,53);
-        Vector2d firstDropPositionMid = new Vector2d(29,29);
-        Vector2d firstDropPositionFar = new Vector2d(52,59);
+        Vector2d firstDropPositionClose = new Vector2d(1,56);
+        //Was 27 30
+        Vector2d firstDropPositionMid = new Vector2d(28,27);
+        Vector2d firstDropPositionFar = new Vector2d(50,55);
         Vector2d ringVector = new Vector2d(-50, 60);
         Vector2d shootVector = new Vector2d(-6, 34);
         Vector2d secondGrabPositionClose = new Vector2d(-37, 15);
-        Vector2d secondGrabPositionMid = new Vector2d(-38, 15);
-        Vector2d secondGrabPositionFar = new Vector2d(-44, 25);
+        Vector2d secondGrabPositionMid = new Vector2d(-36, 9);
+        Vector2d secondGrabPositionFar = new Vector2d(-39, 15);
+        //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
+        Vector2d secondDropPositionClose = firstDropPositionClose.plus(new Vector2d(2,0));//new Vector2d(-1.5, 57)
+        Vector2d secondDropPositionMid = firstDropPositionMid.plus(new Vector2d(-8,3));
+        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-5,5));
 
         //Generate constant trajectories
         Trajectory toShoot = drive.trajectoryBuilder(startPose)
                 .addTemporalMarker(0, () -> {
-                    raiseWobble();
+                    //raiseWobble();
                     setWobbleClaw(true);
                     setShooterAngle(Constants.setShooterAngle);
                 })
                 .splineToConstantHeading(ringVector, 0) //Goes right in front of the ring
-                .addDisplacementMarker(() -> {
-                    hoverWobble();
-                })
                 .addTemporalMarker(1.5, () -> {
                     prepShooter();
                 })
@@ -75,12 +79,14 @@ public class newRouteTest extends AutonomousMethods {
                 .splineToConstantHeading(shootVector, 0) // Goes to shooting position
                 .build();
         //Generate variable trajectory sets
-        Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose, secondGrabPositionClose);
-        Trajectory[] midTrajectories = generateRoute(drive, firstDropPositionMid, secondGrabPositionMid);
-        Trajectory[] farTrajectories = generateRoute(drive, firstDropPositionFar, secondGrabPositionFar);
+        Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose, secondGrabPositionClose, secondDropPositionClose);
+        Trajectory[] midTrajectories = generateRoute(drive, firstDropPositionMid, secondGrabPositionMid, secondDropPositionMid);
+        Trajectory[] farTrajectories = generateRoute(drive, firstDropPositionFar, secondGrabPositionFar, secondDropPositionFar);
         Trajectory[] driveTrajectories;
 
         telemetry.addData("Initialization", "Finished");
+        telemetry.addData("LeftSensor", autonomousGetLeftDistance());
+        telemetry.addData("FrontSensor", autonomousGetFrontDistance());
         telemetry.update();
 
         waitForStart();
@@ -93,6 +99,7 @@ public class newRouteTest extends AutonomousMethods {
         //Shoot
         sleep(1008);
         shootRings();
+        hoverWobble();
         //getWobbleDropPose
         detection = getWobbleDropPose();
         //Set trajectories based on ring detection
@@ -110,14 +117,15 @@ public class newRouteTest extends AutonomousMethods {
         sleep(500);
         raiseWobble();
         sleep(500);
-        //Drive to second goal pickup location
-        //TODO: Split trajectory, add a refreshPose right before grabbing
+
+        //Drive to second goal pickup location and reset angle
         drive.followTrajectory(driveTrajectories[1]);
         encoderTurn(120,1,3);
 
         //drive.followTrajectory(driveTrajectories[2]);
-        autoAdjust(8.3);
-
+        lowerWobble();
+        sleep(120);
+        autoAdjust(8.1, drive);
         //Pick up second goal
         sleep(500);
         setWobbleClaw(true);
@@ -128,6 +136,7 @@ public class newRouteTest extends AutonomousMethods {
         drive.setPoseEstimate(new Pose2d(driveTrajectories[2].end().vec(), Math.toRadians(currentHeading)));
         //Drive to second goal drop position
         drive.followTrajectory(driveTrajectories[3]);
+
         //Drop second goal
         setWobbleClaw(false);
         sleep(200);
@@ -135,13 +144,16 @@ public class newRouteTest extends AutonomousMethods {
         sleep(500);
         //Park
         drive.followTrajectory(driveTrajectories[4]);
+        if (tfod != null) {
+            tfod.shutdown();
+        }
         AutoTransitioner.transitionOnStop(this, "TeleOp");
     }
 
-    private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition){
+    private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition, Vector2d secondDropPosition){
         Trajectory[] output = new Trajectory[5];
-        Vector2d shootVector = new Vector2d(-6, 30);
-        Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-6,3));
+        Vector2d shootVector = new Vector2d(-5, 30);
+        //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
 
         Vector2d parkPosition = new Vector2d(11.5, 22);
 
