@@ -44,9 +44,12 @@ public class Constants {
     static double wobbleLowerPower = -0.5;
     public static double wobbleClose = 0.50;
     public static double wobbleOpen = 0.1;
-    public static double sideArmOut = 0.43;
-    public static double sideArmIn = 0.1;
-    public static double sideArmStraight = 0.63;
+
+    public static double rightSideArmIn = 0.05;
+    public static double rightSideArmOut = 0.43;
+    public static double rightSideArmStraight = 0.63;
+    public static double rightSideArmIntake = 0.85;
+
     public static double imuTurnSpeed = 0.15;
 
     static double collectionPower = 1;

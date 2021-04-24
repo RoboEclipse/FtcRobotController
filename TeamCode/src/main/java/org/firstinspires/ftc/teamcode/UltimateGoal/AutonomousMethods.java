@@ -125,7 +125,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
         final double tolerance = 1;
         final double maxSpeed = 0.84;
         final double minSpeed = 0.08;
-        final double distanceCap = 23;
+        final double distanceCap = 19;
         double leftDistance = myRobot.getLeftDistance();
         double rightDistance = myRobot.getFrontDistance();
         double leftError = leftDistance - targetDistance;
