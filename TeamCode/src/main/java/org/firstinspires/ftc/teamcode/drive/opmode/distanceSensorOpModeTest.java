@@ -47,7 +47,6 @@ public class distanceSensorOpModeTest extends AutonomousMethods {
         Vector2d ringVector = new Vector2d(-50, 60);
         Vector2d shootVector = new Vector2d(-6, 34);
 
-
         //Generate constant trajectories
         Trajectory toShoot = drive.trajectoryBuilder(startPose)
                 .addTemporalMarker(0, () -> {
@@ -55,7 +54,7 @@ public class distanceSensorOpModeTest extends AutonomousMethods {
                     setWobbleClaw(true);
                     setShooterAngle(Constants.setShooterAngle);
                 })
-                .splineToConstantHeading(ringVector, 0) //Goes right in front of the ring
+                //.splineToConstantHeading(ringVector, 0) //Goes right in front of the ring
                 .addDisplacementMarker(() -> {
                     hoverWobble();
                 })
@@ -63,8 +62,8 @@ public class distanceSensorOpModeTest extends AutonomousMethods {
                     prepShooter();
                 })
                 //.splineToConstantHeading(new Vector2d(-30, 60), 0)
-                .splineToConstantHeading(new Vector2d(-12, 60), 0)
-                .splineToConstantHeading(shootVector, 0) // Goes to shooting position
+                .splineTo(new Vector2d(-34, 55.5), 0)
+                .splineToConstantHeading(shootVector, -90) // Goes to shooting position
                 .build();
         //Generate variable trajectory sets
         Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose);
@@ -103,11 +102,11 @@ public class distanceSensorOpModeTest extends AutonomousMethods {
         raiseWobble();
         sleep(500);
         //Drive to corner
-        //TODO: Split trajectory, add a refreshPose right before grabbing
         drive.followTrajectory(driveTrajectories[1]);
         //Readjust
+        encoderTurn(-90,1,3);
         double targetHeading = driveTrajectories[1].end().getHeading();
-        encoderTurn(120,1,3);
+
         drive.setPoseEstimate(new Pose2d(driveTrajectories[1].end().vec(), targetHeading));
         drive.followTrajectory(driveTrajectories[2]);
         //Pick up second goal
