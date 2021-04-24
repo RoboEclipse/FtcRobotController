@@ -49,11 +49,11 @@ public class newRouteTest extends AutonomousMethods {
         //Create Vectors and Poses
         Pose2d startPose = new Pose2d(-63, 55.5, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
-        Vector2d firstDropPositionClose = new Vector2d(1,56);
+        Vector2d firstDropPositionClose = new Vector2d(-2,56);
         //Was 27 30
         Vector2d firstDropPositionMid = new Vector2d(28,27);
         Vector2d firstDropPositionFar = new Vector2d(50,55);
-        Vector2d ringVector = new Vector2d(-50, 60);
+        Vector2d preShootVector = new Vector2d(-30, 55.5);
         Vector2d shootVector = new Vector2d(-6, 34);
         Vector2d secondGrabPositionClose = new Vector2d(-37, 15);
         Vector2d secondGrabPositionMid = new Vector2d(-36, 9);
@@ -61,7 +61,7 @@ public class newRouteTest extends AutonomousMethods {
         //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
         Vector2d secondDropPositionClose = firstDropPositionClose.plus(new Vector2d(2,0));//new Vector2d(-1.5, 57)
         Vector2d secondDropPositionMid = firstDropPositionMid.plus(new Vector2d(-8,3));
-        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-5,5));
+        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-5,3));
 
         //Generate constant trajectories
         Trajectory toShoot = drive.trajectoryBuilder(startPose)
@@ -70,13 +70,13 @@ public class newRouteTest extends AutonomousMethods {
                     setWobbleClaw(true);
                     setShooterAngle(Constants.setShooterAngle);
                 })
-                .splineToConstantHeading(ringVector, 0) //Goes right in front of the ring
+                .splineToConstantHeading(preShootVector, 0) //Goes right in front of the ring
                 .addTemporalMarker(1.5, () -> {
                     prepShooter();
                 })
                 //.splineToConstantHeading(new Vector2d(-30, 60), 0)
-                .splineToConstantHeading(new Vector2d(-12, 60), 0)
-                .splineToConstantHeading(shootVector, 0) // Goes to shooting position
+                //.splineToConstantHeading(new Vector2d(-12, 60), 0)
+                .splineToConstantHeading(shootVector, -90) // Goes to shooting position
                 .build();
         //Generate variable trajectory sets
         Trajectory[] closeTrajectories = generateRoute(drive, firstDropPositionClose, secondGrabPositionClose, secondDropPositionClose);
@@ -169,7 +169,7 @@ public class newRouteTest extends AutonomousMethods {
                 //.splineToConstantHeading(new Vector2d(-6, 38), 0)
                 .splineTo(new Vector2d(7, 25), Math.toRadians(-90))
                 //.splineTo(new Vector2d(-16, 12), Math.toRadians(-180))
-                .splineTo(secondGrabPosition.plus(new Vector2d(8, -9)), Math.toRadians(120))
+                .splineTo(secondGrabPosition.plus(new Vector2d(7, -7.3)), Math.toRadians(120))
                 .build();
         Trajectory toSecondWobble = drive.trajectoryBuilder(getSecondWobble.end())
                 .lineToConstantHeading(secondGrabPosition)

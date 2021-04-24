@@ -53,7 +53,7 @@ public class UltimateGoalTeleOp extends OpMode
     private double elevatorPosition = Constants.elevatorBottom;
     private double tiltPosition = Constants.bottomTilt;
     private double shooterAngle = Constants.setShooterAngle;
-    private double sideArmPosition = Constants.sideArmIn;
+    private double rightSideArmPosition = Constants.rightSideArmIn;
     private boolean ringPushReturn = false;
     private int ringPushStep = -1;
     private boolean bPressed = false;
@@ -245,18 +245,19 @@ public class UltimateGoalTeleOp extends OpMode
 
         if(gamepad1.b && !bPressed){
             bPressed = true;
-            if(sideArmPosition == Constants.sideArmOut){
-                sideArmPosition = Constants.sideArmStraight;
-            }
-            else {
-                sideArmPosition = Constants.sideArmOut;
+            if(rightSideArmPosition == Constants.rightSideArmOut){
+                rightSideArmPosition = Constants.rightSideArmStraight;
+            } else if (rightSideArmPosition == Constants.rightSideArmStraight) {
+                rightSideArmPosition = Constants.rightSideArmIntake;
+            } else {
+                rightSideArmPosition = Constants.rightSideArmOut;
             }
         }
         else if(!gamepad1.b){
             bPressed = false;
         }
         if(gamepad1.a){
-            sideArmPosition = Constants.sideArmIn;
+            rightSideArmPosition = Constants.rightSideArmIn;
         }
 
         myRobot.runWobbleMotor(wobbleMotorPower);
@@ -267,7 +268,7 @@ public class UltimateGoalTeleOp extends OpMode
         myRobot.setElevator(elevatorPosition);
         myRobot.runShooter(shooterPower);
         myRobot.setShooterAngle(shooterAngle);
-        myRobot.setSideArmServo(sideArmPosition);
+        myRobot.setSideArmServo(rightSideArmPosition);
 
         /*Should look like:
         2020-11-08 21:08:37.960 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
