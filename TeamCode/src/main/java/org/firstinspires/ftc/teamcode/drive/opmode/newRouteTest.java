@@ -148,6 +148,7 @@ public class newRouteTest extends AutonomousMethods {
 
         //Park
         drive.followTrajectory(driveTrajectories[5]);
+        encoderTurn(0,1,2);
         if (tfod != null) {
             tfod.shutdown();
         }

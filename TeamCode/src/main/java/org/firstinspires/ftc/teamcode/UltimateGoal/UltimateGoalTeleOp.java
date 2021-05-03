@@ -31,13 +31,19 @@ package org.firstinspires.ftc.teamcode.UltimateGoal;
 
 import android.util.Log;
 
+import com.acmerobotics.roadrunner.drive.MecanumDrive;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name="TeleOp", group="Iterative Opmode")
+
+ @TeleOp(name="TeleOp", group="Iterative Opmode")
 //@Disabled
 public class UltimateGoalTeleOp extends OpMode
 {
@@ -59,6 +65,13 @@ public class UltimateGoalTeleOp extends OpMode
     private int ringPushStep = -1;
     private boolean bPressed = false;
     private double referenceAngle = 0;
+    private boolean inAutoPowerShot = false;
+    private boolean useWobblePower = true;
+    private boolean turningToZero = false;
+    private Trajectory powerShot;
+    private Pose2d startPosition;
+    SampleMecanumDrive drive;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -66,6 +79,18 @@ public class UltimateGoalTeleOp extends OpMode
     @Override
     public void init() {
         myRobot.initialize(hardwareMap, telemetry);
+        drive = new SampleMecanumDrive(hardwareMap);
+        startPosition = new Pose2d(-63, 35, Math.toRadians(180));
+        Vector2d shootPosition = new Vector2d(-20, 12);
+        powerShot = drive.trajectoryBuilder(startPosition) //Start at shoot position
+                .strafeTo(shootPosition) //Go to firstDropPosition
+//                .splineToSplineHeading(new Pose2d(shootPosition, Math.toRadians(0)),Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    turningToZero = true;
+
+                })
+                .build();
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -118,38 +143,21 @@ public class UltimateGoalTeleOp extends OpMode
         double theta = Math.atan2(lx, ly);
         double v_theta = Math.sqrt(lx * lx + ly * ly);
         double v_rotation = gamepad1.right_stick_x;
-        myRobot.drive(theta,  speedMultiplier*v_theta, rotationMultiplier*v_rotation);
+        if(!inAutoPowerShot){
+            myRobot.drive(theta,  speedMultiplier*v_theta, rotationMultiplier*v_rotation);
+        }
+
 
         double currentAngle = myRobot.getAngle();
         //TODO: Make this override properly
         //Automation for powershot
         if (gamepad1.left_bumper) {
-            imuTurn(referenceAngle+2, Constants.imuTurnSpeed);
+            noPIDTurn(referenceAngle+2, Constants.imuTurnSpeed);
         } else if (gamepad1.right_bumper) {
-            imuTurn(referenceAngle-2, Constants.imuTurnSpeed);
+            noPIDTurn(referenceAngle-2, Constants.imuTurnSpeed);
         }
         else{
-            referenceAngle = currentAngle;
-        }
-
-        //Wobble motor
-        if (gamepad1.left_trigger > 0.3) {
-            wobbleMotorPower = Constants.wobbleLowerPower;
-//            setWobbleMotorPosition(1, 0);
-        } else if (gamepad1.right_trigger > 0.3) {
-            wobbleMotorPower = Constants.wobbleRaisePower;
-//            setWobbleMotorPosition(1, Constants.wobbleBottom);
-        } else {
-            wobbleMotorPower = Constants.wobbleHoldingPower;
-        }
-
-
-
-        //Wobble claw
-        if (gamepad1.x){
-            wobbleServoPosition = Constants.wobbleOpen;
-        } else if (gamepad1.y){
-            wobbleServoPosition = Constants.wobbleClose;
+            referenceAngle = Math.toDegrees(currentAngle);
         }
 
         //Collection
@@ -206,11 +214,16 @@ public class UltimateGoalTeleOp extends OpMode
         //Shooter
         if (gamepad2.dpad_up) {
             shooterPower = Constants.shooterPower;
-        } else if (gamepad2.dpad_left) {
+        }
+        /*
+        else if (gamepad2.dpad_left) {
             shooterPower = 0.48;
         } else if (gamepad2.dpad_right) {
             shooterPower = 0.49;
-        } else if (gamepad2.dpad_down) {
+
+        }
+        */
+        else if (gamepad2.dpad_down) {
             shooterPower = 0;
         }
         if (shooterPower < 0) {
@@ -235,11 +248,36 @@ public class UltimateGoalTeleOp extends OpMode
             shooterAngle = 0;
         }
 
-//        double wobbleJoystick = -gamepad2.right_stick_y;
-//        if (Math.abs(wobbleJoystick) > 0.1) {
-//            myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            wobbleMotorPower = wobbleJoystick * 0.75;
-//        }
+        double wobbleJoystick = -gamepad2.right_stick_y;
+        if (Math.abs(wobbleJoystick) > 0.1) {
+            useWobblePower = true;
+            myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wobbleMotorPower = wobbleJoystick * 0.75;
+        }
+        else{
+            wobbleMotorPower = 0;
+        }
+
+        //Wobble motor
+        if (gamepad1.left_trigger > 0.3) {
+//            wobbleMotorPower = Constants.wobbleLowerPower;
+            useWobblePower = false;
+            setWobbleMotorPosition(0.9, 0);
+        } else if (gamepad1.right_trigger > 0.3) {
+//            wobbleMotorPower = Constants.wobbleRaisePower;
+            useWobblePower = false;
+            setWobbleMotorPosition(0.9, Constants.wobbleBottom);
+//            useWobblePower = true;
+        } else {
+//            wobbleMotorPower = Constants.wobbleHoldingPower;
+        }
+
+        //Wobble claw
+        if (gamepad1.x){
+            wobbleServoPosition = Constants.wobbleOpen;
+        } else if (gamepad1.y){
+            wobbleServoPosition = Constants.wobbleClose;
+        }
 
         /*
         if (shooterJoystick > 0.36) {
@@ -270,7 +308,32 @@ public class UltimateGoalTeleOp extends OpMode
             rightSideArmPosition = Constants.rightSideArmIn;
         }
 
-        myRobot.runWobbleMotor(wobbleMotorPower);
+        //Autodrive
+        if(gamepad2.dpad_left){
+            drive.setPoseEstimate(startPosition);
+            drive.followTrajectoryAsync(powerShot);
+            inAutoPowerShot = true;
+        }
+        if(inAutoPowerShot){
+            if(turningToZero){
+                if(imuTurn(0, 0.5)){
+                    inAutoPowerShot = false;
+                    turningToZero = false;
+                }
+            } else {
+                drive.update();
+            }
+        }
+
+
+        if(gamepad2.dpad_right){
+            inAutoPowerShot = false;
+            turningToZero = false;
+        }
+
+        if (useWobblePower) {
+            myRobot.runWobbleMotor(wobbleMotorPower);
+        }
         myRobot.setWobbleClaw(wobbleServoPosition);
         myRobot.runCollector(collectorPower);
         myRobot.setRingPusher(ringPushPosition);
@@ -330,9 +393,25 @@ public class UltimateGoalTeleOp extends OpMode
         myRobot.wobbleGoalMotor.setPower(speed);
     }
 
-    public void imuTurn(double targetAngle, double speed){
-
-        double currentAngle = myRobot.getAngle();
+    public boolean imuTurn(double targetAngle, double speed){
+        //returns whether it's done
+        double tolerance = 1;
+        double maxError = 30;
+        double currentAngle = Math.toDegrees(myRobot.getAngle());
+        double error = currentAngle-targetAngle;
+        if(Math.abs(error)<tolerance){
+            return true;
+        }
+        double leftPower = (error/maxError)*speed;
+        double rightPower = (error/maxError)*-speed;
+        myRobot.lf.setPower(leftPower);
+        myRobot.lb.setPower(leftPower);
+        myRobot.rf.setPower(rightPower);
+        myRobot.rb.setPower(rightPower);
+        return false;
+    }
+    public void noPIDTurn(double targetAngle, double speed){
+        double currentAngle = Math.toDegrees(myRobot.getAngle());
         double error = currentAngle-targetAngle;
         double leftPower = error*speed;
         double rightPower = error*-speed;
