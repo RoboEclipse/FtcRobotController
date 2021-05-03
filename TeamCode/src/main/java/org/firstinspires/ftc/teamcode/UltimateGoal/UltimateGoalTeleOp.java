@@ -33,6 +33,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -134,8 +135,10 @@ public class UltimateGoalTeleOp extends OpMode
         //Wobble motor
         if (gamepad1.left_trigger > 0.3) {
             wobbleMotorPower = Constants.wobbleLowerPower;
+//            setWobbleMotorPosition(1, 0);
         } else if (gamepad1.right_trigger > 0.3) {
             wobbleMotorPower = Constants.wobbleRaisePower;
+//            setWobbleMotorPosition(1, Constants.wobbleBottom);
         } else {
             wobbleMotorPower = Constants.wobbleHoldingPower;
         }
@@ -231,6 +234,13 @@ public class UltimateGoalTeleOp extends OpMode
         if(shooterAngle<0){
             shooterAngle = 0;
         }
+
+//        double wobbleJoystick = -gamepad2.right_stick_y;
+//        if (Math.abs(wobbleJoystick) > 0.1) {
+//            myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            wobbleMotorPower = wobbleJoystick * 0.75;
+//        }
+
         /*
         if (shooterJoystick > 0.36) {
             shooterAngle += Constants.shooterAngleIncrease;
@@ -312,6 +322,12 @@ public class UltimateGoalTeleOp extends OpMode
     @Override
     public void stop() {
 
+    }
+
+    public void setWobbleMotorPosition(double speed, int position){
+        myRobot.wobbleGoalMotor.setTargetPosition(position);
+        myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        myRobot.wobbleGoalMotor.setPower(speed);
     }
 
     public void imuTurn(double targetAngle, double speed){

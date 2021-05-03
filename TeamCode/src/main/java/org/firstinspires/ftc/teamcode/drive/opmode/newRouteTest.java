@@ -49,19 +49,19 @@ public class newRouteTest extends AutonomousMethods {
         //Create Vectors and Poses
         Pose2d startPose = new Pose2d(-63, 55.5, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
-        Vector2d firstDropPositionClose = new Vector2d(-2,56);
+        Vector2d firstDropPositionClose = new Vector2d(5,58);
         //Was 27 30
-        Vector2d firstDropPositionMid = new Vector2d(28,27);
-        Vector2d firstDropPositionFar = new Vector2d(50,55);
+        Vector2d firstDropPositionMid = new Vector2d(25,29);
+        Vector2d firstDropPositionFar = new Vector2d(50,52);
         Vector2d preShootVector = new Vector2d(-30, 55.5);
         Vector2d shootVector = new Vector2d(-6, 34);
-        Vector2d secondGrabPositionClose = new Vector2d(-37, 15);
-        Vector2d secondGrabPositionMid = new Vector2d(-36, 9);
-        Vector2d secondGrabPositionFar = new Vector2d(-39, 15);
+        Vector2d secondGrabPositionClose = new Vector2d(-42, 15);
+        Vector2d secondGrabPositionMid = new Vector2d(-39, 14.2);
+        Vector2d secondGrabPositionFar = new Vector2d(-43, 20);
         //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
-        Vector2d secondDropPositionClose = firstDropPositionClose.plus(new Vector2d(2,0));//new Vector2d(-1.5, 57)
-        Vector2d secondDropPositionMid = firstDropPositionMid.plus(new Vector2d(-8,3));
-        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-5,3));
+        Vector2d secondDropPositionClose = firstDropPositionClose.plus(new Vector2d(-10,-10)); //new Vector2d(-1.5, 57)
+        Vector2d secondDropPositionMid = firstDropPositionMid.plus(new Vector2d(-9,-1));
+        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-9,9));
 
         //Generate constant trajectories
         Trajectory toShoot = drive.trajectoryBuilder(startPose)
@@ -142,8 +142,12 @@ public class newRouteTest extends AutonomousMethods {
         sleep(200);
         raiseWobble();
         sleep(500);
-        //Park
+
+        //Drive backwards
         drive.followTrajectory(driveTrajectories[4]);
+
+        //Park
+        drive.followTrajectory(driveTrajectories[5]);
         if (tfod != null) {
             tfod.shutdown();
         }
@@ -151,8 +155,10 @@ public class newRouteTest extends AutonomousMethods {
     }
 
     private Trajectory[] generateRoute(SampleMecanumDrive drive, Vector2d firstDropPosition, Vector2d secondGrabPosition, Vector2d secondDropPosition){
-        Trajectory[] output = new Trajectory[5];
+        Trajectory[] output = new Trajectory[6];
+        //TODO: UPDATE THE SHOOT VECTOR BECAUSE IT'S WRONG
         Vector2d shootVector = new Vector2d(-5, 30);
+
         //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
 
         Vector2d parkPosition = new Vector2d(11.5, 22);
@@ -175,11 +181,14 @@ public class newRouteTest extends AutonomousMethods {
                 .lineToConstantHeading(secondGrabPosition)
                 .build();
         Trajectory dropSecondWobble = drive.trajectoryBuilder(toSecondWobble.end())
-                .splineTo(new Vector2d(-48, 48), Math.toRadians(90))
-                .splineTo(new Vector2d(-36, 57), Math.toRadians(0))
-                .splineTo(secondDropPosition, 0)
+                .splineToSplineHeading(new Pose2d(-48, 48, Math.toRadians(30)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-36, 57, Math.toRadians(0)), Math.toRadians(0))
+                .splineTo(secondDropPosition, Math.toRadians(0))
                 .build();
-        Trajectory park = drive.trajectoryBuilder(new Pose2d(secondDropPosition, 0),0)
+        Trajectory backing = drive.trajectoryBuilder(dropSecondWobble.end())
+                .back(5)
+                .build();
+        Trajectory park = drive.trajectoryBuilder(backing.end())
                 .addTemporalMarker(0, () -> {
                     setWobbleMotorPosition(0.9, 0);
                 })
@@ -190,7 +199,8 @@ public class newRouteTest extends AutonomousMethods {
         output[1] = getSecondWobble;
         output[2] = toSecondWobble;
         output[3] = dropSecondWobble;
-        output[4] = park;
+        output[4] = backing;
+        output[5] = park;
         return output;
     }
 }
