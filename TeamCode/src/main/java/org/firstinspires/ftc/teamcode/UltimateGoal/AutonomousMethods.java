@@ -77,7 +77,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
     public void prepShooter() {
         //TODO: Testing negative shooter power remove later
         prepElevator();
-        myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.00003)); //Was 0.004
+        myRobot.shooterMotor.setPower(-(Constants.shooterPower + 0.0000375)); //Was 0.004
     }
 
     public void setCollectorPower(int collectorPower) {
