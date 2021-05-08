@@ -310,6 +310,7 @@ public class UltimateGoalTeleOp extends OpMode
 
         //Autodrive
         if(gamepad2.dpad_left){
+            imuTurn(180, 0.5);
             drive.setPoseEstimate(startPosition);
             drive.followTrajectoryAsync(powerShot);
             inAutoPowerShot = true;
@@ -348,8 +349,12 @@ public class UltimateGoalTeleOp extends OpMode
         2020-11-08 21:08:37.964 2298-2424/com.qualcomm.ftcrobotcontroller D/Encoders: Front: 3681 Left: -324 Right: -406
         */
 
+        /*
+
+         */
         telemetry.addData("FrontDistance", myRobot.getFrontDistance());
         telemetry.addData("LeftDistance", myRobot.getLeftDistance());
+        telemetry.addData("RightDistance", myRobot.getRightDistance());
         telemetry.addData("Angle", currentAngle);
         telemetry.addData("wobbleMotorPower", wobbleMotorPower);
         telemetry.addData("wobbleMotorPosition", myRobot.getWobbleMotorPosition());
