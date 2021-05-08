@@ -114,8 +114,10 @@ public class distanceSensorOpModeTest extends AutonomousMethods {
         setWobbleClaw(true);
         sleep(500);
         hoverWobble();
-        //Drive to second goal drop position
+        //Drive to corner again
         drive.followTrajectory(driveTrajectories[3]);
+        drive.setPoseEstimate(new Pose2d(driveTrajectories[3].end().vec(), Math.toRadians(-90)));
+        //Turn
         //Drop second goal
         setWobbleClaw(false);
         sleep(200);
