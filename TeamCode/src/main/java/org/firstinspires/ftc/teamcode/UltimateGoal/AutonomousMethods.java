@@ -88,6 +88,8 @@ abstract public class AutonomousMethods extends LinearOpMode {
         myRobot.shooterTiltServo.setPosition(position);
     }
 
+    public void setRingBlocker(double position) {myRobot.sideArmServo.setPosition(position);}
+
     public void raiseWobble() {
         setWobbleMotorPosition(0.9, Constants.wobbleTop);
     }
