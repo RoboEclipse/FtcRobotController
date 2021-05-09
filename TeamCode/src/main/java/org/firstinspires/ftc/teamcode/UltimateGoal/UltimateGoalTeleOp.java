@@ -63,6 +63,7 @@ public class UltimateGoalTeleOp extends OpMode
     private double rightSideArmPosition = Constants.rightSideArmIn;
     private boolean ringPushReturn = false;
     private int ringPushStep = -1;
+    private boolean wobbleArmBack = false;
     private boolean bPressed = false;
     private double referenceAngle = 0;
     private boolean inAutoPowerShot = false;
@@ -70,6 +71,7 @@ public class UltimateGoalTeleOp extends OpMode
     private boolean turningToZero = false;
     private Trajectory powerShot;
     private Pose2d startPosition;
+    private Pose2d currentPosition;
     SampleMecanumDrive drive;
 
 
@@ -80,8 +82,8 @@ public class UltimateGoalTeleOp extends OpMode
     public void init() {
         myRobot.initialize(hardwareMap, telemetry);
         drive = new SampleMecanumDrive(hardwareMap);
-        startPosition = new Pose2d(-63, 35, Math.toRadians(180));
-        Vector2d shootPosition = new Vector2d(-20, 12);
+        startPosition = new Pose2d(-63, 41, Math.toRadians(180));
+        Vector2d shootPosition = new Vector2d(-24, 15);
         powerShot = drive.trajectoryBuilder(startPosition) //Start at shoot position
                 .strafeTo(shootPosition) //Go to firstDropPosition
 //                .splineToSplineHeading(new Pose2d(shootPosition, Math.toRadians(0)),Math.toRadians(0))
@@ -186,7 +188,8 @@ public class UltimateGoalTeleOp extends OpMode
             prevPushTime = runtime.milliseconds();
         } else if (gamepad2.right_bumper) {
             ringPushStep = 1;
-            //ringPushPosition = Constants.ringPushBack;
+//            rightSideArmPosition = Constants.rightSideArmOut;
+//            ringPushPosition = Constants.ringPushBack;
         }
         if ((ringPushStep != -1) && (runtime.milliseconds() - prevTime >= 360)) {
             ringPushPosition = Constants.ringPush;
@@ -238,6 +241,13 @@ public class UltimateGoalTeleOp extends OpMode
             shooterAngle = Constants.setShooterAngle;
         }
 
+        if (gamepad2.x) {
+            tiltPosition = Constants.topTilt;
+            elevatorPosition = Constants.elevatorTop;
+            shooterPower = Constants.shooterPower;
+            imuTurn(18, 0.5);
+        }
+
         //Shooter Angle
         double shooterJoystick = -gamepad2.left_stick_y;
         shooterAngle += shooterJoystick*0.005;
@@ -251,11 +261,17 @@ public class UltimateGoalTeleOp extends OpMode
         double wobbleJoystick = -gamepad2.right_stick_y;
         if (Math.abs(wobbleJoystick) > 0.1) {
             useWobblePower = true;
+            wobbleArmBack = false;
             myRobot.wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wobbleMotorPower = wobbleJoystick * 0.75;
-        }
-        else{
+        } else {
             wobbleMotorPower = 0;
+        }
+
+        if (wobbleArmBack && !myRobot.wobbleGoalMotor.isBusy()) {
+            useWobblePower = true;
+            wobbleMotorPower = 0;
+            wobbleArmBack = false;
         }
 
         //Wobble motor
@@ -263,10 +279,12 @@ public class UltimateGoalTeleOp extends OpMode
 //            wobbleMotorPower = Constants.wobbleLowerPower;
             useWobblePower = false;
             setWobbleMotorPosition(0.9, 0);
+            wobbleArmBack = true;
         } else if (gamepad1.right_trigger > 0.3) {
 //            wobbleMotorPower = Constants.wobbleRaisePower;
             useWobblePower = false;
             setWobbleMotorPosition(0.9, Constants.wobbleBottom);
+            wobbleArmBack = false;
 //            useWobblePower = true;
         } else {
 //            wobbleMotorPower = Constants.wobbleHoldingPower;
@@ -311,7 +329,14 @@ public class UltimateGoalTeleOp extends OpMode
         //Autodrive
         if(gamepad2.dpad_left){
             imuTurn(180, 0.5);
-            drive.setPoseEstimate(startPosition);
+            double rightDistance = myRobot.getRightDistance();
+            if (rightDistance < 50) {
+                currentPosition = new Pose2d(-72 + 8.5, 63.875 - rightDistance, Math.toRadians(180));
+            } else {
+                currentPosition = startPosition;
+            }
+
+            drive.setPoseEstimate(currentPosition);
             drive.followTrajectoryAsync(powerShot);
             inAutoPowerShot = true;
         }
@@ -320,6 +345,15 @@ public class UltimateGoalTeleOp extends OpMode
                 if(imuTurn(0, 0.5)){
                     inAutoPowerShot = false;
                     turningToZero = false;
+
+                    myRobot.lf.setPower(0);
+                    myRobot.lb.setPower(0);
+                    myRobot.rf.setPower(0);
+                    myRobot.rb.setPower(0);
+
+                    tiltPosition = Constants.topTilt;
+                    elevatorPosition = Constants.elevatorTop;
+                    shooterPower = Constants.shooterPower;
                 }
             } else {
                 drive.update();
@@ -350,12 +384,11 @@ public class UltimateGoalTeleOp extends OpMode
         */
 
         /*
-
-         */
         telemetry.addData("FrontDistance", myRobot.getFrontDistance());
         telemetry.addData("LeftDistance", myRobot.getLeftDistance());
         telemetry.addData("RightDistance", myRobot.getRightDistance());
-        telemetry.addData("Angle", currentAngle);
+        */
+        telemetry.addData("Angle", Math.toDegrees(currentAngle));
         telemetry.addData("wobbleMotorPower", wobbleMotorPower);
         telemetry.addData("wobbleMotorPosition", myRobot.getWobbleMotorPosition());
         telemetry.addData("wobbleServoPosition", wobbleServoPosition);
@@ -402,6 +435,7 @@ public class UltimateGoalTeleOp extends OpMode
         //returns whether it's done
         double tolerance = 1;
         double maxError = 30;
+        double minPower = 0.2;
         double currentAngle = Math.toDegrees(myRobot.getAngle());
         double error = currentAngle-targetAngle;
         if(Math.abs(error)<tolerance){
@@ -409,6 +443,14 @@ public class UltimateGoalTeleOp extends OpMode
         }
         double leftPower = (error/maxError)*speed;
         double rightPower = (error/maxError)*-speed;
+        if(Math.abs(leftPower)<minPower){
+            double sign = Math.signum(leftPower);
+            leftPower = minPower* sign;
+        }
+        if(Math.abs(rightPower)<minPower){
+            double sign = Math.signum(rightPower);
+            rightPower = minPower * sign;
+        }
         myRobot.lf.setPower(leftPower);
         myRobot.lb.setPower(leftPower);
         myRobot.rf.setPower(rightPower);

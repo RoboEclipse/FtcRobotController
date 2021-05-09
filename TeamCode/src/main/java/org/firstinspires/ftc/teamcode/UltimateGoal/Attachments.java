@@ -42,6 +42,7 @@ public class Attachments extends Drivetrain {
         //clawDistance = hardwareMap.get(DistanceSensor.class, names.clawDistance);
         frontDistance = hardwareMap.get(Rev2mDistanceSensor.class, names.frontDistance);
         leftDistance = hardwareMap.get(Rev2mDistanceSensor.class, names.leftDistance);
+        rightDistance = hardwareMap.get(Rev2mDistanceSensor.class, names.rightDistance);
 
         // Motor initalization
         collectionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

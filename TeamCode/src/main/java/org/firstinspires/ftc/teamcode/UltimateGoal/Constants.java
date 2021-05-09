@@ -50,7 +50,7 @@ public class Constants {
     public static double rightSideArmStraight = 0.63;
     public static double rightSideArmIntake = 0.85;
 
-    public static double imuTurnSpeed = 0.15;
+    public static double imuTurnSpeed = 0.18;
 
     static double collectionPower = 1;
 
