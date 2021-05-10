@@ -89,7 +89,10 @@ public class UltimateGoalTeleOp extends OpMode
 //                .splineToSplineHeading(new Pose2d(shootPosition, Math.toRadians(0)),Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     turningToZero = true;
-
+                    useWobblePower = false;
+                    setWobbleMotorPosition(0.9, Constants.wobbleBottomTeleOp);
+                    wobbleArmBack = false;
+                    wobbleServoPosition = Constants.wobbleOpen;
                 })
                 .build();
 
@@ -188,6 +191,7 @@ public class UltimateGoalTeleOp extends OpMode
             prevPushTime = runtime.milliseconds();
         } else if (gamepad2.right_bumper) {
             ringPushStep = 1;
+            rightSideArmPosition = Constants.rightSideArmOut;
 //            rightSideArmPosition = Constants.rightSideArmOut;
 //            ringPushPosition = Constants.ringPushBack;
         }
@@ -245,7 +249,7 @@ public class UltimateGoalTeleOp extends OpMode
             tiltPosition = Constants.topTilt;
             elevatorPosition = Constants.elevatorTop;
             shooterPower = Constants.shooterPower;
-            imuTurn(18, 0.5);
+            imuTurn(0, 0.5);
         }
 
         //Shooter Angle
@@ -283,7 +287,7 @@ public class UltimateGoalTeleOp extends OpMode
         } else if (gamepad1.right_trigger > 0.3) {
 //            wobbleMotorPower = Constants.wobbleRaisePower;
             useWobblePower = false;
-            setWobbleMotorPosition(0.9, Constants.wobbleBottom);
+            setWobbleMotorPosition(0.9, Constants.wobbleBottomTeleOp);
             wobbleArmBack = false;
 //            useWobblePower = true;
         } else {
@@ -327,44 +331,44 @@ public class UltimateGoalTeleOp extends OpMode
         }
 
         //Autodrive
-        if(gamepad2.dpad_left){
-            imuTurn(180, 0.5);
-            double rightDistance = myRobot.getRightDistance();
-            if (rightDistance < 50) {
-                currentPosition = new Pose2d(-72 + 8.5, 63.875 - rightDistance, Math.toRadians(180));
-            } else {
-                currentPosition = startPosition;
-            }
-
-            drive.setPoseEstimate(currentPosition);
-            drive.followTrajectoryAsync(powerShot);
-            inAutoPowerShot = true;
-        }
-        if(inAutoPowerShot){
-            if(turningToZero){
-                if(imuTurn(0, 0.5)){
-                    inAutoPowerShot = false;
-                    turningToZero = false;
-
-                    myRobot.lf.setPower(0);
-                    myRobot.lb.setPower(0);
-                    myRobot.rf.setPower(0);
-                    myRobot.rb.setPower(0);
-
-                    tiltPosition = Constants.topTilt;
-                    elevatorPosition = Constants.elevatorTop;
-                    shooterPower = Constants.shooterPower;
-                }
-            } else {
-                drive.update();
-            }
-        }
-
-
-        if(gamepad2.dpad_right){
-            inAutoPowerShot = false;
-            turningToZero = false;
-        }
+//        if(gamepad2.dpad_left){
+//            imuTurn(180, 0.5);
+//            double rightDistance = myRobot.getRightDistance();
+//            if (rightDistance < 50) {
+//                currentPosition = new Pose2d(-72 + 8.5, 63.875 - rightDistance, Math.toRadians(180));
+//            } else {
+//                currentPosition = startPosition;
+//            }
+//
+//            drive.setPoseEstimate(currentPosition);
+//            drive.followTrajectoryAsync(powerShot);
+//            inAutoPowerShot = true;
+//        }
+//        if(inAutoPowerShot){
+//            if(turningToZero){
+//                if(imuTurn(0, 0.5)){
+//                    inAutoPowerShot = false;
+//                    turningToZero = false;
+//
+//                    myRobot.lf.setPower(0);
+//                    myRobot.lb.setPower(0);
+//                    myRobot.rf.setPower(0);
+//                    myRobot.rb.setPower(0);
+//
+//                    tiltPosition = Constants.topTilt;
+//                    elevatorPosition = Constants.elevatorTop;
+//                    shooterPower = Constants.shooterPower;
+//                }
+//            } else {
+//                drive.update();
+//            }
+//        }
+//
+//
+//        if(gamepad2.dpad_right){
+//            inAutoPowerShot = false;
+//            turningToZero = false;
+//        }
 
         if (useWobblePower) {
             myRobot.runWobbleMotor(wobbleMotorPower);
