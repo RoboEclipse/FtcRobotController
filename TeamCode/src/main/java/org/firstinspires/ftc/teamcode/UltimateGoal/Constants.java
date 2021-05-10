@@ -36,6 +36,7 @@ public class Constants {
     static int wobbleTop = 500;
     static int wobbleHover = 1400;
     static int wobbleBottom = 1475; //Used to be 1625
+    static int wobbleBottomTeleOp = 1450;
 
 
     //Tele-op constants
@@ -46,7 +47,7 @@ public class Constants {
     public static double wobbleOpen = 0.1;
 
     public static double rightSideArmIn = 0.05;
-    public static double rightSideArmOut = 0.43;
+    public static double rightSideArmOut = 0.4;
     public static double rightSideArmStraight = 0.63;
     public static double rightSideArmIntake = 0.85;
 

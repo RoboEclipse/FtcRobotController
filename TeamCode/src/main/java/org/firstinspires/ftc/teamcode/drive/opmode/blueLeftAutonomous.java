@@ -51,17 +51,17 @@ public class blueLeftAutonomous extends AutonomousMethods {
         drive.setPoseEstimate(startPose);
         Vector2d firstDropPositionClose = new Vector2d(5,58);
         //Was 27 30
-        Vector2d firstDropPositionMid = new Vector2d(25,29);
-        Vector2d firstDropPositionFar = new Vector2d(50,52);
+        Vector2d firstDropPositionMid = new Vector2d(25,25);
+        Vector2d firstDropPositionFar = new Vector2d(50,50);
         Vector2d preShootVector = new Vector2d(-30, 55.5);
         Vector2d shootVector = new Vector2d(-6, 34);
         Vector2d secondGrabPositionClose = new Vector2d(-42, 15);
         Vector2d secondGrabPositionMid = new Vector2d(-39, 14.2);
-        Vector2d secondGrabPositionFar = new Vector2d(-43, 20);
+        Vector2d secondGrabPositionFar = new Vector2d(-41, 20);
         //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
         Vector2d secondDropPositionClose = firstDropPositionClose.plus(new Vector2d(-10,-10)); //new Vector2d(-1.5, 57)
-        Vector2d secondDropPositionMid = firstDropPositionMid.plus(new Vector2d(-9,-1));
-        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-9,9));
+        Vector2d secondDropPositionMid = firstDropPositionMid.plus(new Vector2d(-12,-3));
+        Vector2d secondDropPositionFar = firstDropPositionFar.plus(new Vector2d(-9,3));
 
         //Generate constant trajectories
         Trajectory toShoot = drive.trajectoryBuilder(startPose)
@@ -115,8 +115,6 @@ public class blueLeftAutonomous extends AutonomousMethods {
         //Drop first goal
         setWobbleClaw(false);
         sleep(500);
-        raiseWobble();
-        sleep(500);
 
         //Drive to second goal pickup location and reset angle
         drive.followTrajectory(driveTrajectories[1]);
@@ -164,15 +162,12 @@ public class blueLeftAutonomous extends AutonomousMethods {
         //Vector2d secondDropPosition = firstDropPosition.plus(new Vector2d(-5,3));
 
         Vector2d parkPosition = new Vector2d(11.5, 22);
-        Pose2d potentialParkPosition = new Pose2d(-2, 8, Math.toRadians(21));
+        Pose2d potentialParkPosition = new Pose2d(-2, 8, Math.toRadians(9));
 
         Trajectory dropFirstWobble = drive.trajectoryBuilder(new Pose2d(shootVector, 0), 0) //Start at shoot position
                 .strafeTo(firstDropPosition) //Go to firstDropPosition
                 .build();
         Trajectory getSecondWobble = drive.trajectoryBuilder(dropFirstWobble.end())
-                .addTemporalMarker(1.6, () -> {
-                    lowerWobble();
-                })
                 .back(10)
                 .splineToConstantHeading(new Vector2d(0, 38), 0)
                 //.splineToConstantHeading(new Vector2d(-6, 38), 0)
