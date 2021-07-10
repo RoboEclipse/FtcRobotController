@@ -111,9 +111,9 @@ abstract public class AutonomousMethods extends LinearOpMode {
         double x = currentPose.getX();
         double y = currentPose.getY();
         double heading = myRobot.getAngle();
-        if(myRobot.getAngle()>-5 && myRobot.getAngle()<5){
-            x = 72-9-myRobot.getFrontDistance();
-            y = 72-8.5-myRobot.getLeftDistance();
+        if (myRobot.getAngle() > -5 && myRobot.getAngle() < 5) {
+            x = 72 - 9 - myRobot.getFrontDistance();
+            y = 72 - 8.5 - myRobot.getLeftDistance();
         }
         if (myRobot.getAngle() < -175 || myRobot.getAngle() > 175) {
             x = -72 + 9 + myRobot.getFrontDistance();
@@ -281,7 +281,7 @@ abstract public class AutonomousMethods extends LinearOpMode {
             // the last time that call was made.
             String label = "";
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
+            if ((updatedRecognitions != null) && (updatedRecognitions.size() != 0)) {
                 detection = updatedRecognitions.get(0).getLabel();
                 telemetry.addData("Sample Label", detection);
                 Log.d("Sample Label", detection);

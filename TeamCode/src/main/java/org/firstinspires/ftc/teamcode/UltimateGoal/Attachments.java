@@ -80,9 +80,10 @@ public class Attachments extends Drivetrain {
     }
     double getRightDistance(){
         return rightDistance.getDistance(DistanceUnit.INCH);
+    double getFrontDistance(){
+        return frontDistance.getDistance(DistanceUnit.INCH);
     }
-    double getRightDistance(){
-        return rightDistance.getDistance(DistanceUnit.INCH);
-    }
+    double getLeftDistance(){
+        return leftDistance.getDistance(DistanceUnit.INCH);
     double getShooterAngle() {return(shooterTiltServo.getPosition()); }
 }

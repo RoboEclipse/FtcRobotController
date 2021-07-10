@@ -84,9 +84,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 encoderTicksToInches(leftEncoder.getCurrentPosition()),
                 encoderTicksToInches(rightEncoder.getCurrentPosition() * rightWheelRatio),
                 encoderTicksToInches(frontEncoder.getCurrentPosition())
-                // encoderTicksToInches(leftEncoder.getRawVelocity()),
-                // encoderTicksToInches(rightEncoder.getRawVelocity()),
-                // encoderTicksToInches(frontEncoder.getRawVelocity())
         );
     }
 
